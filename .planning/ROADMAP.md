@@ -14,10 +14,11 @@ SViewer transforms raw slouch-tracking JSON into visual posture insights. The ro
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Data Pipeline** - Load, parse, validate, and process slouch-tracking JSON from any input method; establish quality tooling (completed 2026-04-05)
-- [ ] **Phase 2: Time-Series Graph & Theme** - Render the hero chart with one engine, themed and responsive
+- [x] **Phase 2: Time-Series Graph & Theme** - Render the hero chart with one engine, themed and responsive (completed 2026-04-05)
 - [ ] **Phase 3: Metrics Engine & Dashboard** - Compute all posture metrics and display them in a comprehensive dashboard
 - [ ] **Phase 4: Dual Chart Engine** - Add visx/D3 engine and advanced graph interactions
 - [ ] **Phase 5: Export & Polish** - CSV/PNG export, keyboard shortcuts, and final refinements
+- [x] **Phase 6: GitHub Pages + CI** - CI pipeline and GitHub Pages deployment (completed 2026-04-05)
 
 ## Phase Details
 
@@ -58,13 +59,14 @@ Plans:
 4. Screen-off periods appear as shaded/hatched regions rather than connected lines
 5. User can brush-to-zoom on a time range with a minimap overview below the main chart
 6. **Quality gate**: All tests pass (`vitest run`), formatting is clean (`prettier --check .`), and linting is clean (`eslint .`) with zero errors
-   **Plans**: TBD
+   **Plans**: 3 plans
    **UI hint**: yes
 
 Plans:
 
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
+- [x] 02-01-PLAN.md — Install Recharts, add chart CSS tokens, create ThemeProvider + useCSSVar hook, wire theme and RESET action
+- [x] 02-02-PLAN.md — Build core chart components: MainChart, PostureChart, ChartTooltip, ScreenOffBand
+- [x] 02-03-PLAN.md — Build GraphView layout, ThresholdControl, MinimapBrush, and wire App.tsx graph view
 
 ### Phase 3: Metrics Engine & Dashboard
 
@@ -79,14 +81,15 @@ Plans:
 4. User sees a calendar heatmap showing posture quality distribution across hours or days
 5. All metrics display meaningful values (not NaN/Infinity/0) or an explicit "insufficient data" indicator for edge cases
 6. **Quality gate**: All tests pass (`vitest run`), formatting is clean (`prettier --check .`), and linting is clean (`eslint .`) with zero errors
-   **Plans**: TBD
+   **Plans**: 4 plans
    **UI hint**: yes
 
 Plans:
 
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
-- [ ] 03-03: TBD
+- [ ] 03-01-PLAN.md — Define metric types and implement TDD metrics engine (all 18 metrics with tests)
+- [ ] 03-02-PLAN.md — Create useMetrics hook, MetricCard, KPICards, MetricGrid, and DashboardShell components
+- [ ] 03-03-PLAN.md — Build SessionTimeline, CalendarHeatmap, and ScoreBreakdown visualization views
+- [ ] 03-04-PLAN.md — Wire Dashboard composition into App.tsx and visual verification checkpoint
 
 ### Phase 4: Dual Chart Engine
 
@@ -100,13 +103,14 @@ Plans:
 3. User can overlay two different days on the same graph for day-over-day posture comparison
 4. User can click on graph points to add text annotations that persist while the data is loaded
 5. **Quality gate**: All tests pass (`vitest run`), formatting is clean (`prettier --check .`), and linting is clean (`eslint .`) with zero errors
-   **Plans**: TBD
+   **Plans**: 3 plans
    **UI hint**: yes
 
 Plans:
 
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [ ] 04-01-PLAN.md — Define ChartAdapterProps interface, install visx, create ChartStore, build SettingsDropdown and EngineLabel
+- [ ] 04-02-PLAN.md — Refactor Recharts into RechartsAdapter, build VisxAdapter with full feature parity, wire engine switching
+- [ ] 04-03-PLAN.md — Implement day-over-day comparison and clickable graph annotations in both engines
 
 ### Phase 5: Export & Polish
 
@@ -120,22 +124,42 @@ Plans:
 3. URL reflects current view state (time range, threshold, chart engine) so users can share links
 4. User can navigate with keyboard shortcuts (arrows to pan, +/- to zoom, r to reset, t to toggle theme, ? for help)
 5. **Quality gate**: All tests pass (`vitest run`), formatting is clean (`prettier --check .`), and linting is clean (`eslint .`) with zero errors
-   **Plans**: TBD
+   **Plans**: 2 plans
 
 Plans:
 
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
+- [ ] 05-01-PLAN.md — Install html-to-image, add theme override CSS, create ViewStore, implement export hooks (CSV/PNG) and URL state hook
+- [ ] 05-02-PLAN.md — Build keyboard shortcuts, export dropdown, copy link, help modal, key toast, toolbar; wire into App.tsx
+
+### Phase 6: GitHub Pages Export + CI Workflow
+
+**Goal:** CI pipeline runs lint, test, and format checks on every push/PR; deploys the built SPA to GitHub Pages on push to main via official GitHub Actions
+**Depends on:** Phase 1 (quality gates established)
+**Requirements**: INFRA-01, INFRA-02, INFRA-03, INFRA-04
+**Plans:** 1 plan
+
+**Success Criteria** (what must be TRUE):
+
+1. GitHub Actions workflow runs lint, test, and format check in parallel on every push and PR
+2. Build job only proceeds if all three quality gates pass
+3. Deploy to GitHub Pages only occurs on push to main or workflow_dispatch
+4. Deployed app loads correctly with proper asset paths (dynamic base path via resolvePagesBase())
+5. Local development is unaffected (base path remains / when not in CI)
+
+Plans:
+
+- [x] 06-01-PLAN.md — Add resolvePagesBase() to vite.config.ts, format:check script to package.json, create CI + Pages deploy workflow
 
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
-| Phase                         | Plans Complete | Status      | Completed |
-| ----------------------------- | -------------- | ----------- | --------- |
-| 1. Data Pipeline              | 4/4 | Complete   | 2026-04-05 |
-| 2. Time-Series Graph & Theme  | 0/0            | Not started | -         |
-| 3. Metrics Engine & Dashboard | 0/0            | Not started | -         |
-| 4. Dual Chart Engine          | 0/0            | Not started | -         |
-| 5. Export & Polish            | 0/0            | Not started | -         |
+| Phase                         | Plans Complete | Status      | Completed  |
+| ----------------------------- | -------------- | ----------- | ---------- |
+| 1. Data Pipeline              | 4/4            | Complete    | 2026-04-05 |
+| 2. Time-Series Graph & Theme  | 3/3            | Complete    | 2026-04-05 |
+| 3. Metrics Engine & Dashboard | 0/4            | Planned     | -          |
+| 4. Dual Chart Engine          | 0/3            | Planned     | -          |
+| 5. Export & Polish            | 0/2            | Planned     | -          |
+| 6. GitHub Pages + CI          | 1/1            | Complete    | 2026-04-05 |
