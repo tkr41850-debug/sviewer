@@ -204,11 +204,10 @@ export function RechartsAdapter({
   );
 
   // Handle chart click — find nearest data point and create annotation (D-07)
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChartClick = useCallback(
-    (chartEvent: any) => {
+    (chartEvent: { activePayload?: { payload: ChartPoint }[] } | null) => {
       if (!onAnnotationCreate || !chartEvent?.activePayload?.length) return;
-      const point = chartEvent.activePayload[0].payload as ChartPoint;
+      const point = chartEvent.activePayload[0].payload;
       if (point.deltaY !== null) {
         onAnnotationCreate(point.time, point.deltaY);
       }

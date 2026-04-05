@@ -159,12 +159,10 @@ export function AnnotationLayer({
 }: AnnotationLayerProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
 
-  // When creatingId changes, clear any editing state
-  useEffect(() => {
-    if (creatingId) {
-      setEditingId(null);
-    }
-  }, [creatingId]);
+  // When a new annotation is being created, clear editing state.
+  // The lint rule forbids setState inside useEffect, so derive it:
+  // editingId is only meaningful when creatingId is null.
+  const effectiveEditingId = creatingId ? null : editingId;
 
   return (
     <div
@@ -179,8 +177,8 @@ export function AnnotationLayer({
           x={timeToX(ann.time)}
           y={deltaYToY(ann.deltaY)}
           isCreating={creatingId === ann.id || ann.text === ''}
-          isEditing={editingId === ann.id}
-          onStartEdit={() => setEditingId(editingId === ann.id ? null : ann.id)}
+          isEditing={effectiveEditingId === ann.id}
+          onStartEdit={() => setEditingId(effectiveEditingId === ann.id ? null : ann.id)}
           onUpdate={onUpdate}
           onDelete={onDelete}
         />

@@ -1,9 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import {
-  extractAvailableDates,
-  extractDayRecords,
-  normalizeToMinuteOfDay,
-} from './DayComparison';
+import { extractAvailableDates, extractDayRecords, normalizeToMinuteOfDay } from './DayComparison';
 import type { PostureRecord } from '../../data/types';
 
 function makeRecord(timeMs: number, deltaY: number = 5): PostureRecord {
