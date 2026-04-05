@@ -10,8 +10,8 @@ Requirements for initial release. Each maps to roadmap phases.
 ### Data Loading
 
 - [x] **LOAD-01**: User can load JSON data via drag-and-drop onto the page
-- [ ] **LOAD-02**: User can load JSON data via file picker dialog
-- [ ] **LOAD-03**: User can load JSON data via inline URL parameter (`?data=[...]`)
+- [x] **LOAD-02**: User can load JSON data via file picker dialog
+- [x] **LOAD-03**: User can load JSON data via inline URL parameter (`?data=[...]`)
 - [x] **LOAD-04**: App auto-detects timestamp format (Unix seconds, Unix milliseconds, ISO strings)
 - [x] **LOAD-05**: App validates JSON structure and shows specific error messages for malformed data
 - [x] **LOAD-06**: App handles large files without freezing the UI (Web Worker for parsing)
@@ -124,8 +124,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | Requirement | Phase   | Status  |
 | ----------- | ------- | ------- |
 | LOAD-01     | Phase 1 | Complete |
-| LOAD-02     | Phase 1 | Pending |
-| LOAD-03     | Phase 1 | Pending |
+| LOAD-02     | Phase 1 | Complete |
+| LOAD-03     | Phase 1 | Complete |
 | LOAD-04     | Phase 1 | Complete |
 | LOAD-05     | Phase 1 | Complete |
 | LOAD-06     | Phase 1 | Complete |
