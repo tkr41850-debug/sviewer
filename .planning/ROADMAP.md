@@ -15,8 +15,8 @@ Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Data Pipeline** - Load, parse, validate, and process slouch-tracking JSON from any input method; establish quality tooling (completed 2026-04-05)
 - [x] **Phase 2: Time-Series Graph & Theme** - Render the hero chart with one engine, themed and responsive (completed 2026-04-05)
-- [ ] **Phase 3: Metrics Engine & Dashboard** - Compute all posture metrics and display them in a comprehensive dashboard
-- [ ] **Phase 4: Dual Chart Engine** - Add visx/D3 engine and advanced graph interactions
+- [x] **Phase 3: Metrics Engine & Dashboard** - Compute all posture metrics and display them in a comprehensive dashboard (completed 2026-04-05)
+- [x] **Phase 4: Dual Chart Engine** - Add visx/D3 engine and advanced graph interactions (completed 2026-04-05)
 - [ ] **Phase 5: Export & Polish** - CSV/PNG export, keyboard shortcuts, and final refinements
 - [x] **Phase 6: GitHub Pages + CI** - CI pipeline and GitHub Pages deployment (completed 2026-04-05)
 
@@ -159,7 +159,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 | ----------------------------- | -------------- | ----------- | ---------- |
 | 1. Data Pipeline              | 4/4            | Complete    | 2026-04-05 |
 | 2. Time-Series Graph & Theme  | 3/3            | Complete    | 2026-04-05 |
-| 3. Metrics Engine & Dashboard | 0/4            | Planned     | -          |
-| 4. Dual Chart Engine          | 0/3            | Planned     | -          |
+| 3. Metrics Engine & Dashboard | 4/4            | Complete    | 2026-04-05 |
+| 4. Dual Chart Engine          | 3/3            | Complete    | 2026-04-05 |
 | 5. Export & Polish            | 0/2            | Planned     | -          |
 | 6. GitHub Pages + CI          | 1/1            | Complete    | 2026-04-05 |
