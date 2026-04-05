@@ -65,7 +65,7 @@ Plans:
 
 - [x] 02-01-PLAN.md — Install Recharts, add chart CSS tokens, create ThemeProvider + useCSSVar hook, wire theme and RESET action
 - [x] 02-02-PLAN.md — Build core chart components: MainChart, PostureChart, ChartTooltip, ScreenOffBand
-- [ ] 02-03-PLAN.md — Build GraphView layout, ThresholdControl, MinimapBrush, and wire App.tsx graph view
+- [x] 02-03-PLAN.md — Build GraphView layout, ThresholdControl, MinimapBrush, and wire App.tsx graph view
 
 ### Phase 3: Metrics Engine & Dashboard
 
@@ -130,10 +130,29 @@ Plans:
 - [ ] 05-01-PLAN.md — Install html-to-image, add theme override CSS, create ViewStore, implement export hooks (CSV/PNG) and URL state hook
 - [ ] 05-02-PLAN.md — Build keyboard shortcuts, export dropdown, copy link, help modal, key toast, toolbar; wire into App.tsx
 
+### Phase 6: GitHub Pages Export + CI Workflow
+
+**Goal:** CI pipeline runs lint, test, and format checks on every push/PR; deploys the built SPA to GitHub Pages on push to main via official GitHub Actions
+**Depends on:** Phase 1 (quality gates established)
+**Requirements**: INFRA-01, INFRA-02, INFRA-03, INFRA-04
+**Plans:** 1 plan
+
+**Success Criteria** (what must be TRUE):
+
+1. GitHub Actions workflow runs lint, test, and format check in parallel on every push and PR
+2. Build job only proceeds if all three quality gates pass
+3. Deploy to GitHub Pages only occurs on push to main or workflow_dispatch
+4. Deployed app loads correctly with proper asset paths (dynamic base path via resolvePagesBase())
+5. Local development is unaffected (base path remains / when not in CI)
+
+Plans:
+
+- [ ] 06-01-PLAN.md — Add resolvePagesBase() to vite.config.ts, format:check script to package.json, create CI + Pages deploy workflow
+
 ## Progress
 
 **Execution Order:**
-Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
+Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
 | Phase                         | Plans Complete | Status      | Completed |
 | ----------------------------- | -------------- | ----------- | --------- |
@@ -142,13 +161,4 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 3. Metrics Engine & Dashboard | 0/4            | Planned | -         |
 | 4. Dual Chart Engine          | 0/3            | Planned | -         |
 | 5. Export & Polish            | 0/2            | Planned | -         |
-
-### Phase 6: github.io pages export with workflow to run ci (tests/format/lint)
-
-**Goal:** [To be planned]
-**Requirements**: TBD
-**Depends on:** Phase 5
-**Plans:** 0 plans
-
-Plans:
-- [ ] TBD (run /gsd-plan-phase 6 to break down)
+| 6. GitHub Pages + CI          | 0/1            | Planned | -         |
