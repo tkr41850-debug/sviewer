@@ -16,7 +16,7 @@ import {
 import { useChartColors } from '../../hooks/useCSSVar';
 import { computeScreenOffRegions } from './ScreenOffBand';
 import { ChartTooltip } from './ChartTooltip';
-import type { ChartAdapterProps, PostureRecord } from '../../data/types';
+import type { ChartAdapterProps } from '../../data/types';
 
 interface ChartPoint {
   time: number;
@@ -50,6 +50,8 @@ export function RechartsAdapter({
   annotations,
   onAnnotationCreate,
   comparisonData,
+  comparisonLabel,
+  primaryLabel,
   normalizeTimeAxis,
 }: ChartAdapterProps) {
   const colors = useChartColors();
@@ -151,10 +153,11 @@ export function RechartsAdapter({
   const formatYAxis = (v: number): string => `${v}px`;
 
   // Handle chart click — find nearest data point and create annotation
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChartClick = useCallback(
-    (chartEvent: { activePayload?: Array<{ payload: PostureRecord | ChartPoint }> }) => {
+    (chartEvent: any) => {
       if (!onAnnotationCreate || !chartEvent?.activePayload?.length) return;
-      const point = chartEvent.activePayload[0].payload;
+      const point = chartEvent.activePayload[0].payload as ChartPoint;
       if (point.deltaY !== null) {
         onAnnotationCreate(point.time, point.deltaY);
       }
@@ -171,7 +174,7 @@ export function RechartsAdapter({
   }, [normalizeTimeAxis, visibleDomain]);
 
   return (
-    <div role="img" aria-label="Posture data time-series graph">
+    <div role="img" aria-label="Posture data time-series graph" className="relative h-full w-full">
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart
           data={mergedChartData}
@@ -291,6 +294,29 @@ export function RechartsAdapter({
           />
         </ComposedChart>
       </ResponsiveContainer>
+
+      {/* Comparison legend */}
+      {comparisonData && primaryLabel && comparisonLabel && (
+        <div
+          className="absolute left-14 top-1 flex items-center gap-3 text-xs"
+          style={{ color: 'var(--color-text-secondary)' }}
+        >
+          <span className="flex items-center gap-1">
+            <span className="inline-block h-0.5 w-4" style={{ background: colors.chartLine }} />
+            {primaryLabel}
+          </span>
+          <span className="flex items-center gap-1">
+            <span
+              className="inline-block h-0.5 w-4"
+              style={{
+                background: colors.postureSlouch,
+                borderTop: '1px dashed ' + colors.postureSlouch,
+              }}
+            />
+            {comparisonLabel}
+          </span>
+        </div>
+      )}
     </div>
   );
 }

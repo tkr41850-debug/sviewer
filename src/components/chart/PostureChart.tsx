@@ -1,8 +1,10 @@
 import { useState, useMemo, useCallback } from 'react';
+import { format, parseISO } from 'date-fns';
 import { RechartsAdapter } from './RechartsAdapter';
 import { VisxAdapter } from './VisxAdapter';
 import { SettingsDropdown } from './SettingsDropdown';
 import { EngineLabel } from './EngineLabel';
+import { DayComparison, extractDayRecords } from './DayComparison';
 import { useChartState, useChartDispatch } from '../../stores/chartStore';
 import { downsampleForChart } from '../../data/normalizer';
 import type {
@@ -54,7 +56,7 @@ export function PostureChart({
   const [threshold, setThreshold] = useState<ThresholdConfig>({ value: 15, unit: '%' });
   const [visibleDomain, setVisibleDomain] = useState<[number, number] | null>(null);
 
-  const { activeEngine, annotations } = useChartState();
+  const { activeEngine, annotations, comparison } = useChartState();
   const chartDispatch = useChartDispatch();
 
   const medianReferenceY = useMedianReferenceY(records);
@@ -67,6 +69,22 @@ export function PostureChart({
 
   // Downsample for chart rendering (LTTB to max 1500 points)
   const downsampledPoints = useMemo(() => downsampleForChart(records), [records]);
+
+  // Extract comparison data when enabled (per D-04/D-05/D-06)
+  const comparisonData = useMemo(() => {
+    if (!comparison.enabled || !comparison.day2) return undefined;
+    const dayRecords = extractDayRecords(records, comparison.day2);
+    if (dayRecords.length === 0) return undefined;
+    return downsampleForChart(dayRecords);
+  }, [comparison.enabled, comparison.day2, records]);
+
+  // Filter primary data to day1 when comparison is active
+  const primaryData = useMemo(() => {
+    if (!comparison.enabled || !comparison.day1) return downsampledPoints;
+    const dayRecords = extractDayRecords(records, comparison.day1);
+    if (dayRecords.length === 0) return downsampledPoints;
+    return downsampleForChart(dayRecords);
+  }, [comparison.enabled, comparison.day1, records, downsampledPoints]);
 
   // Expose threshold/domain changes to parent for Plan 03 wiring
   const handleThresholdChange = (config: ThresholdConfig) => {
@@ -117,7 +135,7 @@ export function PostureChart({
 
   // Build ChartAdapterProps — same object for both engines (D-12 state preservation)
   const adapterProps: ChartAdapterProps = {
-    data: downsampledPoints,
+    data: primaryData,
     thresholdPx,
     visibleDomain: visibleDomain ?? undefined,
     onBrushChange: setVisibleDomain,
@@ -125,7 +143,10 @@ export function PostureChart({
     onAnnotationCreate: handleAnnotationCreate,
     onAnnotationUpdate: handleAnnotationUpdate,
     onAnnotationDelete: handleAnnotationDelete,
-    // comparisonData and normalizeTimeAxis will be wired in Plan 03
+    comparisonData,
+    comparisonLabel: comparison.day2 ? format(parseISO(comparison.day2), 'MMM dd') : undefined,
+    primaryLabel: comparison.day1 ? format(parseISO(comparison.day1), 'MMM dd') : undefined,
+    normalizeTimeAxis: comparison.enabled && !!comparison.day1 && !!comparison.day2,
   };
 
   // Per D-02: instant swap (no animation/crossfade)
@@ -133,8 +154,9 @@ export function PostureChart({
 
   return (
     <div className="relative flex h-full w-full flex-col">
-      {/* Settings dropdown — positioned top-right per D-01 */}
-      <div className="absolute right-2 top-2 z-40">
+      {/* Top bar: comparison controls + settings */}
+      <div className="flex items-center justify-between px-2 py-1">
+        <DayComparison records={records} />
         <SettingsDropdown />
       </div>
 

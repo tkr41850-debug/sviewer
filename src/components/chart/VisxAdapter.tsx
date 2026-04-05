@@ -102,6 +102,8 @@ export function VisxAdapter({
   annotations,
   onAnnotationCreate,
   comparisonData,
+  comparisonLabel,
+  primaryLabel,
   normalizeTimeAxis,
 }: ChartAdapterProps) {
   const colors = useChartColors();
@@ -527,6 +529,29 @@ export function VisxAdapter({
                 : 'Good'}
           </div>
         </TooltipWithBounds>
+      )}
+
+      {/* Comparison legend */}
+      {comparisonData && primaryLabel && comparisonLabel && (
+        <div
+          className="absolute left-14 top-1 flex items-center gap-3 text-xs"
+          style={{ color: colors.textSecondary }}
+        >
+          <span className="flex items-center gap-1">
+            <span className="inline-block h-0.5 w-4" style={{ background: colors.chartLine }} />
+            {primaryLabel}
+          </span>
+          <span className="flex items-center gap-1">
+            <span
+              className="inline-block h-0.5 w-4"
+              style={{
+                background: colors.postureSlouch,
+                borderTop: '1px dashed ' + colors.postureSlouch,
+              }}
+            />
+            {comparisonLabel}
+          </span>
+        </div>
       )}
     </div>
   );
