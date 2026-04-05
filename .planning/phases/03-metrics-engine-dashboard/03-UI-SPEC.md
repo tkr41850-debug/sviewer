@@ -59,20 +59,20 @@ design_system: manual (Tailwind v4 + CSS custom properties)
 
 **Font family:** System font stack via Tailwind default (`font-sans`). No custom fonts.
 
-**Weights used this phase:** 3 weights -- 400 (regular), 600 (semibold), and 700 (bold). The 600 weight is inherited from the Phase 2 heading pattern; 700 is introduced this phase for dashboard metric values where maximum visual prominence is required.
+**Weights used this phase:** 2 weights -- 400 (regular) and 700 (bold).
 
 | Role | Size | Weight | Line Height | Usage |
 |------|------|--------|-------------|-------|
 | KPI value (display) | 36px | 700 (bold) | 1.2 | Large metric card primary number |
 | Grid value | 24px | 700 (bold) | 1.2 | Small metric card primary number |
-| Section heading | 14px | 600 (semibold) | 1.5 | Dashboard section headings (uppercase tracking-wide) |
+| Section heading | 14px | 700 (bold) | 1.5 | Dashboard section headings (uppercase tracking-wide) |
 | Body / label | 14px | 400 (regular) | 1.5 | Quality warning text, general body copy |
 | Small label | 12px | 400 (regular) | 1.5 | Metric card label, unit suffix, heatmap axis labels, legend text, grid card label |
 | Unit suffix | 60% of parent value size | 400 (regular) | 1.0 | Inline unit displayed next to value (e.g., "/100", "%", "min") |
 
-**Section headings pattern:** All dashboard section headings (`h3`) use 14px semibold (600 weight), uppercase, tracking-wide (`tracking-wide`), colored with `--color-text-secondary`. This creates a quiet, non-competing label style that does not fight the KPI numbers for attention.
+**Section headings pattern:** All dashboard section headings (`h3`) use 14px bold (700 weight), uppercase, tracking-wide (`tracking-wide`), colored with `--color-text-secondary`. Despite sharing the same weight as metric values, section headings are visually distinct through four independent channels: size (14px vs 24-36px), case (uppercase vs normal), letter-spacing (tracking-wide vs default), and color (`--color-text-secondary` vs `--color-text-primary`). This creates a quiet, non-competing label style that does not fight the KPI numbers for attention.
 
-**Weight justification:** Phase 2 established 600 (semibold) for section headings. This phase adds 700 (bold) for metric values where numerical prominence is the primary design goal. Using 3 weights is a deliberate hierarchy: 400 for body/labels, 600 for structural headings, 700 for data values. The extra weight creates clear visual separation between navigational labels (600) and the hero numbers (700) that are the dashboard's core content.
+**Weight justification:** Two weights provide a clean hierarchy: 400 for all body text, labels, and supporting copy; 700 for all elements requiring visual prominence (metric values and section headings). Section headings and metric values share 700 weight but are differentiated by size (14px vs 24-36px), uppercase transform, tracking-wide letter-spacing, and secondary text color -- four independent visual channels that make a third weight unnecessary.
 
 ## 4. Color
 
@@ -522,4 +522,5 @@ No new dependencies to install for Phase 3. All required packages are already av
 
 _Contract created: 2026-04-05_
 _Revised: 2026-04-05 -- fixed typography weight contradiction (3 weights declared), heatmap cell gap exception documented_
+_Revised: 2026-04-05 -- collapsed from 3 weights to 2 (removed 600/semibold; section headings now use 700/bold, differentiated by size, case, tracking, and color)_
 _Status: draft -- awaiting checker validation_
