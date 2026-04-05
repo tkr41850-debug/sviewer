@@ -8,16 +8,6 @@
   --color-border: oklch(85% 0 0);
   --color-text-primary: oklch(15% 0 0);
   --color-text-secondary: oklch(45% 0 0);
-
-  /* Chart-semantic tokens */
-  --color-posture-good: oklch(62% 0.19 145);
-  --color-posture-slouch: oklch(62% 0.2 25);
-  --color-screen-off: oklch(70% 0.02 250);
-  --color-threshold: oklch(55% 0.15 60);
-  --color-chart-line: oklch(45% 0.18 250);
-  --color-chart-grid: oklch(88% 0 0);
-  --color-tooltip-bg: oklch(15% 0 0);
-  --color-tooltip-text: oklch(95% 0 0);
 }
 
 @media (prefers-color-scheme: dark) {
@@ -29,15 +19,5 @@
     --color-border: oklch(28% 0 0);
     --color-text-primary: oklch(92% 0 0);
     --color-text-secondary: oklch(60% 0 0);
-
-    /* Chart-semantic tokens */
-    --color-posture-good: oklch(70% 0.17 145);
-    --color-posture-slouch: oklch(68% 0.18 25);
-    --color-screen-off: oklch(35% 0.02 250);
-    --color-threshold: oklch(65% 0.13 60);
-    --color-chart-line: oklch(72% 0.15 250);
-    --color-chart-grid: oklch(22% 0 0);
-    --color-tooltip-bg: oklch(22% 0.01 250);
-    --color-tooltip-text: oklch(92% 0 0);
   }
 }
