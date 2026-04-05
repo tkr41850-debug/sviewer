@@ -7,8 +7,8 @@ interface ThresholdControlProps {
   medianReferenceY: number; // for %<->px conversion
 }
 
+const DEFAULT_PX = 20;
 const DEFAULT_PERCENT = 15;
-const DEFAULT_PX = 50;
 const MAX_PERCENT = 100;
 const MAX_PX = 500;
 
@@ -18,7 +18,8 @@ function clampValue(value: number, unit: '%' | 'px'): number {
 }
 
 /**
- * Numeric input with %/px toggle overlay for threshold adjustment.
+ * Numeric input with direction selector (> / <) and %/px toggle for threshold adjustment.
+ * One-sided threshold: deltaY > threshold or deltaY < -threshold.
  * Converts between units using medianReferenceY for accurate mapping.
  * Touch-target compliant (44px min) and theme-aware via CSS variables.
  */
@@ -55,10 +56,8 @@ export function ThresholdControl({
 
       let newValue: number;
       if (newUnit === 'px') {
-        // % -> px: multiply medianReferenceY by percentage
         newValue = Math.round(medianReferenceY * (threshold.value / 100));
       } else {
-        // px -> %: divide by medianReferenceY and multiply by 100
         newValue =
           medianReferenceY > 0
             ? Math.round((threshold.value / medianReferenceY) * 100)
@@ -66,10 +65,34 @@ export function ThresholdControl({
       }
 
       newValue = clampValue(newValue, newUnit);
-      onThresholdChange({ value: newValue, unit: newUnit });
+      onThresholdChange({ ...threshold, value: newValue, unit: newUnit });
     },
     [threshold, onThresholdChange, medianReferenceY]
   );
+
+  const handleDirectionChange = useCallback(
+    (e: React.ChangeEvent<HTMLSelectElement>) => {
+      const newDirection = e.target.value as '>' | '<';
+      onThresholdChange({ ...threshold, direction: newDirection });
+    },
+    [threshold, onThresholdChange]
+  );
+
+  const handleInvertYChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onThresholdChange({ ...threshold, invertY: e.target.checked });
+    },
+    [threshold, onThresholdChange]
+  );
+
+  const selectStyle = {
+    minHeight: '44px',
+    borderColor: 'var(--color-border)',
+    color: 'var(--color-text-primary)',
+    background: 'var(--color-bg)',
+    fontSize: '14px',
+    padding: '0 8px',
+  };
 
   return (
     <div
@@ -89,8 +112,18 @@ export function ThresholdControl({
           color: 'var(--color-text-secondary)',
         }}
       >
-        Threshold
+        Slouch when
       </label>
+      <select
+        aria-label="Threshold direction"
+        value={threshold.direction}
+        onChange={handleDirectionChange}
+        className="rounded border focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
+        style={selectStyle}
+      >
+        <option value=">">&gt;</option>
+        <option value="<">&lt;</option>
+      </select>
       <input
         id="threshold-value"
         type="number"
@@ -115,18 +148,30 @@ export function ThresholdControl({
         value={threshold.unit}
         onChange={handleUnitChange}
         className="rounded border focus:outline-none focus:ring-2 focus:ring-[var(--color-accent)]"
-        style={{
-          minHeight: '44px',
-          borderColor: 'var(--color-border)',
-          color: 'var(--color-text-primary)',
-          background: 'var(--color-bg)',
-          fontSize: '14px',
-          padding: '0 8px',
-        }}
+        style={selectStyle}
       >
         <option value="%">%</option>
         <option value="px">px</option>
       </select>
+      <label
+        className="flex items-center gap-1.5 select-none"
+        style={{
+          fontSize: '14px',
+          fontWeight: 400,
+          color: 'var(--color-text-secondary)',
+          marginLeft: '4px',
+        }}
+      >
+        <input
+          type="checkbox"
+          checked={threshold.invertY}
+          onChange={handleInvertYChange}
+          aria-label="Invert Y axis"
+          className="rounded"
+          style={{ accentColor: 'var(--color-accent)' }}
+        />
+        Invert Y
+      </label>
     </div>
   );
 }

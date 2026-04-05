@@ -14,13 +14,20 @@ interface ChartTooltipProps {
     screenOff: string;
   };
   thresholdValue: number; // absolute px value for comparison
+  direction?: '>' | '<'; // '>' means deltaY > threshold is slouching (larger y = physically lower)
 }
 
 /**
  * Custom Recharts tooltip showing timestamp, delta Y value, and posture state.
  * Recharts passes active, payload, and label props automatically.
  */
-export function ChartTooltip({ active, payload, colors, thresholdValue }: ChartTooltipProps) {
+export function ChartTooltip({
+  active,
+  payload,
+  colors,
+  thresholdValue,
+  direction = '>',
+}: ChartTooltipProps) {
   if (!active || !payload || payload.length === 0) {
     return null;
   }
@@ -39,9 +46,12 @@ export function ChartTooltip({ active, payload, colors, thresholdValue }: ChartT
   let stateColor: string;
 
   if (isScreenOff) {
-    stateText = 'Screen Off';
+    stateText = 'Offscreen';
     stateColor = colors.screenOff;
-  } else if (deltaY !== null && Math.abs(deltaY) > thresholdValue) {
+  } else if (
+    deltaY !== null &&
+    (direction === '>' ? deltaY > thresholdValue : deltaY < -thresholdValue)
+  ) {
     stateText = 'Slouching';
     stateColor = colors.postureSlouch;
   } else {

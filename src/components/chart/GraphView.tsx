@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import clsx from 'clsx';
 import { useDataDispatch } from '../../stores/dataStore';
 import { downsampleForChart } from '../../data/normalizer';
-import { MainChart } from './MainChart';
+import { PostureChart } from './PostureChart';
 import { MinimapBrush } from './MinimapBrush';
 import { ThresholdControl } from './ThresholdControl';
 import type { PostureRecord, ThresholdConfig, ParseResult } from '../../data/types';
@@ -12,6 +12,8 @@ interface GraphViewProps {
   metadata: ParseResult['metadata'];
   /** Callback fired whenever the computed threshold in pixels changes. */
   onThresholdPxChange?: (thresholdPx: number) => void;
+  /** Callback fired whenever the threshold direction changes. */
+  onDirectionChange?: (direction: '>' | '<') => void;
 }
 
 /** Debounce delay for resize listener (ms). */
@@ -25,11 +27,21 @@ const MOBILE_BREAKPOINT = 640;
  * and a "Load new file" link. Manages threshold and visible domain state,
  * computes medianReferenceY and thresholdPx, and responds to viewport changes.
  */
-export function GraphView({ records, metadata, onThresholdPxChange }: GraphViewProps) {
+export function GraphView({
+  records,
+  metadata,
+  onThresholdPxChange,
+  onDirectionChange,
+}: GraphViewProps) {
   const dispatch = useDataDispatch();
 
   // Local state
-  const [threshold, setThreshold] = useState<ThresholdConfig>({ value: 15, unit: '%' });
+  const [threshold, setThreshold] = useState<ThresholdConfig>({
+    value: 20,
+    unit: 'px',
+    direction: '>',
+    invertY: true,
+  });
   const [visibleDomain, setVisibleDomain] = useState<[number, number] | null>(null);
   const [isMobile, setIsMobile] = useState(
     typeof window !== 'undefined' ? window.innerWidth < MOBILE_BREAKPOINT : false
@@ -68,10 +80,14 @@ export function GraphView({ records, metadata, onThresholdPxChange }: GraphViewP
     return medianReferenceY * (threshold.value / 100);
   }, [threshold, medianReferenceY]);
 
-  // Notify parent when thresholdPx changes
+  // Notify parent when thresholdPx or direction changes
   useEffect(() => {
     onThresholdPxChange?.(thresholdPx);
   }, [thresholdPx, onThresholdPxChange]);
+
+  useEffect(() => {
+    onDirectionChange?.(threshold.direction);
+  }, [threshold.direction, onDirectionChange]);
 
   // Downsample for chart rendering (LTTB to max 1500 points)
   const downsampledPoints = useMemo(() => downsampleForChart(records), [records]);
@@ -107,15 +123,10 @@ export function GraphView({ records, metadata, onThresholdPxChange }: GraphViewP
 
       {/* Main chart area -- takes remaining vertical space */}
       <div
-        className={clsx('min-h-0 flex-1', isMobile ? 'px-4' : 'px-6')}
+        className={clsx('min-h-0 flex-1 overflow-visible', isMobile ? 'px-4' : 'px-6')}
         style={{ minHeight: '200px' }}
       >
-        <MainChart
-          data={downsampledPoints}
-          thresholdPx={thresholdPx}
-          visibleDomain={visibleDomain ?? undefined}
-          annotations={[]}
-        />
+        <PostureChart records={records} metadata={metadata} />
       </div>
 
       {/* Gap between chart and minimap */}

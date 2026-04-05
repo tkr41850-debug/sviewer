@@ -12,6 +12,7 @@ export interface TimelineSegment {
 interface SessionTimelineProps {
   records: PostureRecord[];
   thresholdPx: number;
+  direction?: '>' | '<';
   onSegmentClick?: (startTime: number, endTime: number) => void;
 }
 
@@ -38,30 +39,37 @@ function formatSegmentDuration(ms: number): string {
 
 function classifyRecord(
   record: PostureRecord,
-  thresholdPx: number
+  thresholdPx: number,
+  direction: '>' | '<'
 ): 'good' | 'slouch' | 'screenOff' {
   if (record.isScreenOff) return 'screenOff';
-  if (record.deltaY !== null && Math.abs(record.deltaY) > thresholdPx) return 'slouch';
+  if (record.deltaY !== null) {
+    const slouching =
+      direction === '>' ? record.deltaY > thresholdPx : record.deltaY < -thresholdPx;
+    if (slouching) return 'slouch';
+  }
   return 'good';
 }
 
 /**
  * Compute contiguous segments from a sequence of posture records.
  * Consecutive records with the same state are merged into one segment.
- * Segment count is bounded by state transitions, not record count (T-03-07 mitigation).
  */
-export function computeSegments(records: PostureRecord[], thresholdPx: number): TimelineSegment[] {
+export function computeSegments(
+  records: PostureRecord[],
+  thresholdPx: number,
+  direction: '>' | '<' = '>'
+): TimelineSegment[] {
   if (records.length === 0) return [];
 
   const segments: TimelineSegment[] = [];
-  let currentType = classifyRecord(records[0], thresholdPx);
+  let currentType = classifyRecord(records[0], thresholdPx, direction);
   let segStart = records[0].time;
   let segLastTime = records[0].time;
 
   for (let i = 1; i < records.length; i++) {
-    const recType = classifyRecord(records[i], thresholdPx);
+    const recType = classifyRecord(records[i], thresholdPx, direction);
     if (recType !== currentType) {
-      // Close current segment — endTime is this record's time (start of next state)
       segments.push({
         startTime: segStart,
         endTime: records[i].time,
@@ -74,12 +82,8 @@ export function computeSegments(records: PostureRecord[], thresholdPx: number): 
     segLastTime = records[i].time;
   }
 
-  // Close final segment
-  // For the final segment's end time, estimate by adding median interval
-  // between records or use last record time if single record segment
   let finalEndTime = segLastTime;
   if (records.length >= 2) {
-    // Compute median interval across all records for a reasonable final segment duration
     const intervals: number[] = [];
     for (let i = 1; i < records.length; i++) {
       const diff = records[i].time - records[i - 1].time;
@@ -117,8 +121,19 @@ function LegendItem({ color, label }: { color: string; label: string }) {
 
 // --- Main component ---
 
-export function SessionTimeline({ records, thresholdPx, onSegmentClick }: SessionTimelineProps) {
-  const segments = computeSegments(records, thresholdPx);
+const SEGMENT_LABELS: Record<string, string> = {
+  screenOff: 'Offscreen',
+  slouch: 'Slouching',
+  good: 'Good Posture',
+};
+
+export function SessionTimeline({
+  records,
+  thresholdPx,
+  direction = '>',
+  onSegmentClick,
+}: SessionTimelineProps) {
+  const segments = computeSegments(records, thresholdPx, direction);
   const totalDuration = segments.reduce((sum, s) => sum + s.durationMs, 0);
 
   if (segments.length === 0 || totalDuration === 0) {
@@ -153,7 +168,7 @@ export function SessionTimeline({ records, thresholdPx, onSegmentClick }: Sessio
               minWidth: '1px',
             }}
             onClick={() => onSegmentClick?.(seg.startTime, seg.endTime)}
-            title={`${seg.type === 'screenOff' ? 'Screen Off' : seg.type === 'slouch' ? 'Slouching' : 'Good Posture'} — ${formatSegmentDuration(seg.durationMs)}`}
+            title={`${SEGMENT_LABELS[seg.type]} — ${formatSegmentDuration(seg.durationMs)}`}
             aria-label={`${seg.type} segment, ${formatSegmentDuration(seg.durationMs)}`}
           />
         ))}
@@ -161,7 +176,7 @@ export function SessionTimeline({ records, thresholdPx, onSegmentClick }: Sessio
       <div className="flex gap-4 mt-2">
         <LegendItem color="oklch(65% 0.2 145)" label="Good" />
         <LegendItem color="var(--color-destructive)" label="Slouching" />
-        <LegendItem color="var(--color-border)" label="Screen Off" />
+        <LegendItem color="var(--color-border)" label="Offscreen" />
       </div>
     </div>
   );

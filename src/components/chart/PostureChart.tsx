@@ -53,7 +53,12 @@ export function PostureChart({
   onThresholdChange,
   onVisibleDomainChange,
 }: PostureChartProps) {
-  const [threshold, setThreshold] = useState<ThresholdConfig>({ value: 15, unit: '%' });
+  const [threshold, setThreshold] = useState<ThresholdConfig>({
+    value: 20,
+    unit: 'px',
+    direction: '>',
+    invertY: true,
+  });
   const [visibleDomain, setVisibleDomain] = useState<[number, number] | null>(null);
 
   const { activeEngine, annotations, comparison } = useChartState();
@@ -147,15 +152,17 @@ export function PostureChart({
     comparisonLabel: comparison.day2 ? format(parseISO(comparison.day2), 'MMM dd') : undefined,
     primaryLabel: comparison.day1 ? format(parseISO(comparison.day1), 'MMM dd') : undefined,
     normalizeTimeAxis: comparison.enabled && !!comparison.day1 && !!comparison.day2,
+    direction: threshold.direction,
+    invertY: threshold.invertY,
   };
 
   // Per D-02: instant swap (no animation/crossfade)
   const ChartComponent = activeEngine === 'visx' ? VisxAdapter : RechartsAdapter;
 
   return (
-    <div className="relative flex h-full w-full flex-col">
-      {/* Top bar: comparison controls + settings */}
-      <div className="flex items-center justify-between px-2 py-1">
+    <div className="relative flex h-full w-full flex-col overflow-visible">
+      {/* Top bar: comparison controls + settings (overflow-visible for dropdown) */}
+      <div className="flex items-center justify-between px-2 py-1 overflow-visible">
         <DayComparison records={records} />
         <SettingsDropdown />
       </div>

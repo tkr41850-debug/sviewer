@@ -12,13 +12,23 @@ interface DashboardProps {
   records: PostureRecord[];
   metadata: ParseResult['metadata'];
   thresholdPx: number;
+  direction?: '>' | '<';
   onTimeRangeSelect?: (startTime: number, endTime: number) => void;
 }
 
-export function Dashboard({ records, thresholdPx, onTimeRangeSelect }: DashboardProps) {
-  const metrics = useMetrics(thresholdPx);
+function isSlouching(deltaY: number, thresholdPx: number, direction: '>' | '<'): boolean {
+  return direction === '>' ? deltaY > thresholdPx : deltaY < -thresholdPx;
+}
 
-  // Compute score breakdown percentages from records (T-03-09 mitigation: memoized)
+export function Dashboard({
+  records,
+  thresholdPx,
+  direction = '>',
+  onTimeRangeSelect,
+}: DashboardProps) {
+  const metrics = useMetrics(thresholdPx, direction);
+
+  // Compute score breakdown percentages from records
   const breakdown = useMemo(() => {
     const total = records.length;
     if (total === 0) return { good: 0, slouch: 0, screenOff: 0 };
@@ -30,7 +40,7 @@ export function Dashboard({ records, thresholdPx, onTimeRangeSelect }: Dashboard
     for (const r of records) {
       if (r.isScreenOff) {
         screenOff++;
-      } else if (r.deltaY !== null && Math.abs(r.deltaY) > thresholdPx) {
+      } else if (r.deltaY !== null && isSlouching(r.deltaY, thresholdPx, direction)) {
         slouch++;
       } else {
         good++;
@@ -42,29 +52,21 @@ export function Dashboard({ records, thresholdPx, onTimeRangeSelect }: Dashboard
       slouch: (slouch / total) * 100,
       screenOff: (screenOff / total) * 100,
     };
-  }, [records, thresholdPx]);
+  }, [records, thresholdPx, direction]);
 
   if (!metrics) return null;
 
   return (
     <DashboardShell>
-      {/* VIEW-01: KPI Cards — per D-02, first section */}
       <KPICards metrics={metrics} />
-
-      {/* VIEW-02: Metric Grid — per D-02, second section */}
       <MetricGrid metrics={metrics} />
-
-      {/* VIEW-03: Session Timeline — per D-02, third section */}
       <SessionTimeline
         records={records}
         thresholdPx={thresholdPx}
+        direction={direction}
         onSegmentClick={onTimeRangeSelect}
       />
-
-      {/* VIEW-04: Calendar Heatmap — per D-02, fourth section */}
-      <CalendarHeatmap records={records} thresholdPx={thresholdPx} />
-
-      {/* VIEW-05: Score Breakdown — per D-02, fifth section */}
+      <CalendarHeatmap records={records} thresholdPx={thresholdPx} direction={direction} />
       <ScoreBreakdown
         goodPercent={breakdown.good}
         slouchPercent={breakdown.slouch}

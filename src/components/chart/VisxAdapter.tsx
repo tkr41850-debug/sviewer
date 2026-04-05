@@ -108,6 +108,8 @@ export function VisxAdapter({
   normalizeTimeAxis,
   onAnnotationUpdate,
   onAnnotationDelete,
+  direction = '>',
+  invertY = true,
 }: ChartAdapterProps) {
   const colors = useChartColors();
 
@@ -211,7 +213,10 @@ export function VisxAdapter({
           const yPadding = (yMax - yMin) * 0.1 || 10;
           const yScale = scaleLinear<number>({
             domain: [yMin - yPadding, yMax + yPadding],
-            range: [height - margin.bottom, margin.top],
+            // invertY: larger Y values render lower (bigger Y = physically lower)
+            range: invertY
+              ? [margin.top, height - margin.bottom]
+              : [height - margin.bottom, margin.top],
           });
 
           // Store scales in refs for AnnotationLayer access
@@ -235,9 +240,13 @@ export function VisxAdapter({
                 d.deltaY !== null ? Math.max(-thresholdPx, Math.min(thresholdPx, d.deltaY)) : 0,
             }));
 
-          // Area data: slouch fill (beyond threshold)
+          // Area data: slouch fill (one-sided threshold; larger y = physically lower)
           const slouchSegments = (segment: PostureRecord[]) =>
-            segment.filter((d) => d.deltaY !== null && Math.abs(d.deltaY) > thresholdPx);
+            segment.filter(
+              (d) =>
+                d.deltaY !== null &&
+                (direction === '>' ? d.deltaY > thresholdPx : d.deltaY < -thresholdPx)
+            );
 
           // Handle mouse move for tooltip
           const handleMouseMove = (event: React.MouseEvent<SVGRectElement>) => {
@@ -341,21 +350,12 @@ export function VisxAdapter({
                 );
               })}
 
-              {/* Threshold dashed lines */}
+              {/* Threshold dashed line (one-sided; larger y = physically lower) */}
               <line
                 x1={margin.left}
                 x2={width - margin.right}
-                y1={yScale(thresholdPx)}
-                y2={yScale(thresholdPx)}
-                stroke={colors.threshold}
-                strokeDasharray="6,4"
-                strokeWidth={2}
-              />
-              <line
-                x1={margin.left}
-                x2={width - margin.right}
-                y1={yScale(-thresholdPx)}
-                y2={yScale(-thresholdPx)}
+                y1={yScale(direction === '>' ? thresholdPx : -thresholdPx)}
+                y2={yScale(direction === '>' ? thresholdPx : -thresholdPx)}
                 stroke={colors.threshold}
                 strokeDasharray="6,4"
                 strokeWidth={2}
@@ -551,15 +551,21 @@ export function VisxAdapter({
             style={{
               color: tooltipData.isScreenOff
                 ? colors.screenOff
-                : tooltipData.deltaY !== null && Math.abs(tooltipData.deltaY) > thresholdPx
+                : tooltipData.deltaY !== null &&
+                    (direction === '>'
+                      ? tooltipData.deltaY > thresholdPx
+                      : tooltipData.deltaY < -thresholdPx)
                   ? colors.postureSlouch
                   : colors.postureGood,
               fontWeight: 600,
             }}
           >
             {tooltipData.isScreenOff
-              ? 'Screen Off'
-              : tooltipData.deltaY !== null && Math.abs(tooltipData.deltaY) > thresholdPx
+              ? 'Offscreen'
+              : tooltipData.deltaY !== null &&
+                  (direction === '>'
+                    ? tooltipData.deltaY > thresholdPx
+                    : tooltipData.deltaY < -thresholdPx)
                 ? 'Slouching'
                 : 'Good'}
           </div>
