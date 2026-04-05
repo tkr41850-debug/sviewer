@@ -58,13 +58,14 @@ Plans:
 4. Screen-off periods appear as shaded/hatched regions rather than connected lines
 5. User can brush-to-zoom on a time range with a minimap overview below the main chart
 6. **Quality gate**: All tests pass (`vitest run`), formatting is clean (`prettier --check .`), and linting is clean (`eslint .`) with zero errors
-   **Plans**: TBD
+   **Plans**: 3 plans
    **UI hint**: yes
 
 Plans:
 
-- [ ] 02-01: TBD
-- [ ] 02-02: TBD
+- [ ] 02-01-PLAN.md — Install Recharts, add chart CSS tokens, create ThemeProvider + useCSSVar hook, wire theme and RESET action
+- [ ] 02-02-PLAN.md — Build core chart components: MainChart, PostureChart, ChartTooltip, ScreenOffBand
+- [ ] 02-03-PLAN.md — Build GraphView layout, ThresholdControl, MinimapBrush, and wire App.tsx graph view
 
 ### Phase 3: Metrics Engine & Dashboard
 
@@ -135,7 +136,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | Phase                         | Plans Complete | Status      | Completed |
 | ----------------------------- | -------------- | ----------- | --------- |
 | 1. Data Pipeline              | 4/4 | Complete   | 2026-04-05 |
-| 2. Time-Series Graph & Theme  | 0/0            | Not started | -         |
+| 2. Time-Series Graph & Theme  | 0/3            | Planned | -         |
 | 3. Metrics Engine & Dashboard | 0/0            | Not started | -         |
 | 4. Dual Chart Engine          | 0/0            | Not started | -         |
 | 5. Export & Polish            | 0/0            | Not started | -         |
