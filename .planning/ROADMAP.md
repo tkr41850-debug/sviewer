@@ -86,10 +86,10 @@ Plans:
 
 Plans:
 
-- [ ] 03-01-PLAN.md — Define metric types and implement TDD metrics engine (all 18 metrics with tests)
-- [ ] 03-02-PLAN.md — Create useMetrics hook, MetricCard, KPICards, MetricGrid, and DashboardShell components
-- [ ] 03-03-PLAN.md — Build SessionTimeline, CalendarHeatmap, and ScoreBreakdown visualization views
-- [ ] 03-04-PLAN.md — Wire Dashboard composition into App.tsx and visual verification checkpoint
+- [x] 03-01-PLAN.md — Define metric types and implement TDD metrics engine (all 18 metrics with tests)
+- [x] 03-02-PLAN.md — Create useMetrics hook, MetricCard, KPICards, MetricGrid, and DashboardShell components
+- [x] 03-03-PLAN.md — Build SessionTimeline, CalendarHeatmap, and ScoreBreakdown visualization views
+- [x] 03-04-PLAN.md — Wire Dashboard composition into App.tsx and visual verification checkpoint
 
 ### Phase 4: Dual Chart Engine
 
