@@ -31,7 +31,7 @@ design_system: manual (Tailwind v4 + CSS custom properties)
 
 | Token | Value | Usage in this phase |
 |-------|-------|---------------------|
-| `xs` | 4px | Legend icon-to-label gap, heatmap cell gap |
+| `xs` | 4px | Legend icon-to-label gap |
 | `sm` | 8px | Metric card internal gap between label and value, heatmap grid gap |
 | `md` | 16px | Small metric card padding, legend row spacing, section heading margin-bottom |
 | `lg` | 24px | Large KPI card padding, horizontal page padding (mobile) |
@@ -44,7 +44,6 @@ design_system: manual (Tailwind v4 + CSS custom properties)
 - Gap between KPI cards: 16px (`gap-4`)
 - Gap between secondary grid cards: 12px (`gap-3`)
 - Gap between dashboard sections: 32px (`gap-8`)
-- Heatmap cell gap: 2px
 - Heatmap cell minimum size: 20px height, 28px width
 - Donut chart diameter: 160px (inner radius 50px, outer radius 80px)
 - Timeline bar height: 32px (`h-8`)
@@ -52,25 +51,28 @@ design_system: manual (Tailwind v4 + CSS custom properties)
 
 **Touch targets:** Minimum 44px height for all interactive elements. Session timeline segments are 32px tall but are clickable buttons with full-width hit areas.
 
-**Exceptions:** Heatmap cells are 20px minimum (below 44px touch target) but are not interactive controls — they display title tooltip on hover only.
+**Exceptions:**
+- Heatmap cells are 20px minimum (below 44px touch target) but are not interactive controls -- they display title tooltip on hover only.
+- **Heatmap cell gap: 2px.** This is an intentional exception to the 4px-minimum grid rule. Justification: heatmap cells are 20px tall by 28px wide; a 4px gap between cells would consume 17% of the cell height and create excessive whitespace that fragments the visual density of the heatmap, undermining its purpose as a dense at-a-glance pattern display. At 2px the gap is just enough to distinguish individual cells while preserving the cohesive color-field effect that makes hourly patterns readable.
 
 ## 3. Typography
 
 **Font family:** System font stack via Tailwind default (`font-sans`). No custom fonts.
 
-**Weights used this phase:** 2 weights only — 400 (regular) and 700 (bold).
+**Weights used this phase:** 3 weights -- 400 (regular), 600 (semibold), and 700 (bold). The 600 weight is inherited from the Phase 2 heading pattern; 700 is introduced this phase for dashboard metric values where maximum visual prominence is required.
 
 | Role | Size | Weight | Line Height | Usage |
 |------|------|--------|-------------|-------|
 | KPI value (display) | 36px | 700 (bold) | 1.2 | Large metric card primary number |
 | Grid value | 24px | 700 (bold) | 1.2 | Small metric card primary number |
-| Body / label | 14px | 400 (regular) | 1.5 | Section headings (uppercase tracking-wide), quality warning text |
+| Section heading | 14px | 600 (semibold) | 1.5 | Dashboard section headings (uppercase tracking-wide) |
+| Body / label | 14px | 400 (regular) | 1.5 | Quality warning text, general body copy |
 | Small label | 12px | 400 (regular) | 1.5 | Metric card label, unit suffix, heatmap axis labels, legend text, grid card label |
 | Unit suffix | 60% of parent value size | 400 (regular) | 1.0 | Inline unit displayed next to value (e.g., "/100", "%", "min") |
 
 **Section headings pattern:** All dashboard section headings (`h3`) use 14px semibold (600 weight), uppercase, tracking-wide (`tracking-wide`), colored with `--color-text-secondary`. This creates a quiet, non-competing label style that does not fight the KPI numbers for attention.
 
-**Note:** Phase 2 established 600 (semibold) as heading weight. This phase uses 700 (bold) exclusively for metric values. Section heading labels use 600 semibold per the established pattern. The addition of 700 weight is specific to dashboard metric values where visual prominence is critical.
+**Weight justification:** Phase 2 established 600 (semibold) for section headings. This phase adds 700 (bold) for metric values where numerical prominence is the primary design goal. Using 3 weights is a deliberate hierarchy: 400 for body/labels, 600 for structural headings, 700 for data values. The extra weight creates clear visual separation between navigational labels (600) and the hero numbers (700) that are the dashboard's core content.
 
 ## 4. Color
 
@@ -519,4 +521,5 @@ No new dependencies to install for Phase 3. All required packages are already av
 ---
 
 _Contract created: 2026-04-05_
+_Revised: 2026-04-05 -- fixed typography weight contradiction (3 weights declared), heatmap cell gap exception documented_
 _Status: draft -- awaiting checker validation_
