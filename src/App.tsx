@@ -5,7 +5,7 @@ import { parseAndProcess } from './data/parser';
 import { DropZone } from './components/input/DropZone';
 import { ProcessingIndicator } from './components/input/ProcessingIndicator';
 import { ErrorMessage } from './components/input/ErrorMessage';
-import { SuccessIndicator } from './components/input/SuccessIndicator';
+import { GraphView } from './components/chart/GraphView';
 import './index.css';
 
 const MAX_URL_DATA_BYTES = 50 * 1024; // 50KB safety limit (PITFALL 6)
@@ -58,12 +58,12 @@ function UploadPage() {
 
   return (
     <div
-      className="min-h-screen flex flex-col items-center justify-center px-4"
+      className="flex min-h-screen flex-col items-center justify-center px-4"
       style={{ background: 'var(--color-bg)' }}
     >
       <div className="w-full" style={{ maxWidth: '480px' }}>
         <h1
-          className="text-center font-semibold mb-6"
+          className="mb-6 text-center font-semibold"
           style={{
             fontSize: '28px',
             lineHeight: '1.15',
@@ -75,7 +75,6 @@ function UploadPage() {
 
         {state.status === 'idle' && <DropZone onFile={loadFile} />}
         {state.status === 'loading' && <ProcessingIndicator />}
-        {state.status === 'loaded' && <SuccessIndicator result={state.result} />}
         {state.status === 'error' && <ErrorMessage error={state.error} onRetry={handleRetry} />}
 
         {state.status === 'idle' && (
@@ -89,5 +88,11 @@ function UploadPage() {
 }
 
 export default function App() {
+  const state = useDataState();
+
+  if (state.status === 'loaded') {
+    return <GraphView records={state.result.records} metadata={state.result.metadata} />;
+  }
+
   return <UploadPage />;
 }

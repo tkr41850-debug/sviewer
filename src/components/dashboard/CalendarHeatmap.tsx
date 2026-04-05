@@ -32,10 +32,7 @@ interface CalendarHeatmapProps {
  * Compute heatmap data by grouping active records into (day, hour) cells.
  * Grid is bounded to 24 columns x number of distinct days (T-03-06 mitigation).
  */
-export function computeHeatmapData(
-  records: PostureRecord[],
-  thresholdPx: number,
-): HeatmapData {
+export function computeHeatmapData(records: PostureRecord[], thresholdPx: number): HeatmapData {
   const cellMap = new Map<string, { total: number; slouching: number }>();
   const daySet = new Set<string>();
 

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts';
 
 // --- Types ---
@@ -17,34 +17,22 @@ interface ScoreBreakdownProps {
  * if running in a non-browser environment (e.g., tests/SSR).
  */
 function useCSSVarFallback(varName: string, fallback: string): string {
-  const [value, setValue] = useState(fallback);
-  const ref = useRef<string>(fallback);
+  const resolve = useCallback(
+    () =>
+      typeof document !== 'undefined'
+        ? getComputedStyle(document.documentElement).getPropertyValue(varName).trim() || fallback
+        : fallback,
+    [varName, fallback]
+  );
 
-  useEffect(() => {
-    const resolved = getComputedStyle(document.documentElement)
-      .getPropertyValue(varName)
-      .trim();
-    if (resolved && resolved !== ref.current) {
-      ref.current = resolved;
-      setValue(resolved);
-    }
-  }, [varName]);
+  const [value, setValue] = useState(resolve);
 
-  // Listen for theme changes via media query
   useEffect(() => {
     const mq = window.matchMedia('(prefers-color-scheme: dark)');
-    const handler = () => {
-      const resolved = getComputedStyle(document.documentElement)
-        .getPropertyValue(varName)
-        .trim();
-      if (resolved) {
-        ref.current = resolved;
-        setValue(resolved);
-      }
-    };
+    const handler = () => setValue(resolve());
     mq.addEventListener('change', handler);
     return () => mq.removeEventListener('change', handler);
-  }, [varName]);
+  }, [resolve]);
 
   return value;
 }

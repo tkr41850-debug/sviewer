@@ -38,7 +38,7 @@ function formatSegmentDuration(ms: number): string {
 
 function classifyRecord(
   record: PostureRecord,
-  thresholdPx: number,
+  thresholdPx: number
 ): 'good' | 'slouch' | 'screenOff' {
   if (record.isScreenOff) return 'screenOff';
   if (record.deltaY !== null && Math.abs(record.deltaY) > thresholdPx) return 'slouch';
@@ -50,10 +50,7 @@ function classifyRecord(
  * Consecutive records with the same state are merged into one segment.
  * Segment count is bounded by state transitions, not record count (T-03-07 mitigation).
  */
-export function computeSegments(
-  records: PostureRecord[],
-  thresholdPx: number,
-): TimelineSegment[] {
+export function computeSegments(records: PostureRecord[], thresholdPx: number): TimelineSegment[] {
   if (records.length === 0) return [];
 
   const segments: TimelineSegment[] = [];
@@ -120,11 +117,7 @@ function LegendItem({ color, label }: { color: string; label: string }) {
 
 // --- Main component ---
 
-export function SessionTimeline({
-  records,
-  thresholdPx,
-  onSegmentClick,
-}: SessionTimelineProps) {
+export function SessionTimeline({ records, thresholdPx, onSegmentClick }: SessionTimelineProps) {
   const segments = computeSegments(records, thresholdPx);
   const totalDuration = segments.reduce((sum, s) => sum + s.durationMs, 0);
 
