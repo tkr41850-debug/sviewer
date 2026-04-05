@@ -205,14 +205,16 @@ export function RechartsAdapter({
 
   // Handle chart click — find nearest data point and create annotation (D-07)
   const handleChartClick = useCallback(
-    (chartEvent: { activePayload?: { payload: ChartPoint }[] } | null) => {
-      if (!onAnnotationCreate || !chartEvent?.activePayload?.length) return;
-      const point = chartEvent.activePayload[0].payload;
-      if (point.deltaY !== null) {
+    (nextState: Record<string, unknown>) => {
+      if (!onAnnotationCreate) return;
+      const idx = nextState.activeTooltipIndex;
+      if (typeof idx !== 'number') return;
+      const point = mergedChartData[idx];
+      if (point && point.deltaY !== null) {
         onAnnotationCreate(point.time, point.deltaY);
       }
     },
-    [onAnnotationCreate]
+    [onAnnotationCreate, mergedChartData]
   );
 
   // Compute visible domain for X-axis in normalized mode
