@@ -11,7 +11,7 @@ function makeRecords(
     isScreenOff?: boolean;
     sessionIndex?: number;
     referenceY?: number;
-  }>,
+  }>
 ): PostureRecord[] {
   return specs.map((s) => ({
     time: s.time,
@@ -26,7 +26,7 @@ function makeRecords(
 
 function makeMetadata(
   records: PostureRecord[],
-  overrides?: Partial<ParseResult['metadata']>,
+  overrides?: Partial<ParseResult['metadata']>
 ): ParseResult['metadata'] {
   const activeRecords = records.filter((r) => !r.isScreenOff);
   const times = activeRecords.map((r) => r.time);
@@ -90,9 +90,7 @@ const normalInput = makeInput(normalRecords, 20);
 
 // ─── Edge Case Fixtures ──────────────────────────────────────────
 
-const singleRecord = makeRecords([
-  { time: BASE_TIME, deltaY: 15, sessionIndex: 0 },
-]);
+const singleRecord = makeRecords([{ time: BASE_TIME, deltaY: 15, sessionIndex: 0 }]);
 
 const allScreenOff = makeRecords([
   { time: BASE_TIME, deltaY: null, isScreenOff: true, sessionIndex: 0 },
@@ -170,10 +168,12 @@ describe('computeAllMetrics - core metrics', () => {
 
   it('METR-04: totalScreenTime equals sum of intervals between non-screen-off records', () => {
     const result = computeAllMetrics(normalInput);
-    // Session 0: records 0-8 = 8 intervals of 1 minute = 8 * MINUTE
-    // Session 1: records 11-19 = 8 intervals of 1 minute = 8 * MINUTE
-    // Total = 16 * MINUTE = 960000ms
-    expect(result.totalScreenTime.value).toBe(16 * MINUTE);
+    // Active records: 0-8 (session 0) + 11-19 (session 1) = 18 records, 17 intervals
+    // Session 0: 8 intervals of 1 minute = 8 * MINUTE
+    // Gap: record 8 -> record 11 = 3 * MINUTE (active-to-active, screen-off filtered out)
+    // Session 1: 8 intervals of 1 minute = 8 * MINUTE
+    // Total = (8 + 3 + 8) * MINUTE = 19 * MINUTE = 1140000ms
+    expect(result.totalScreenTime.value).toBe(19 * MINUTE);
     expect(result.totalScreenTime.quality).toBe('reliable');
   });
 
@@ -221,9 +221,7 @@ describe('computeAllMetrics - hourly & trend metrics', () => {
 
   it('METR-11: dailyTrend is a TrendDirection value', () => {
     const result = computeAllMetrics(normalInput);
-    expect(['improving', 'declining', 'stable', 'insufficient']).toContain(
-      result.dailyTrend.value,
-    );
+    expect(['improving', 'declining', 'stable', 'insufficient']).toContain(result.dailyTrend.value);
   });
 
   it('METR-12: improvementRate is a number (slope in score-units per hour)', () => {
@@ -271,7 +269,7 @@ describe('computeAllMetrics - advanced metrics', () => {
   it('METR-17: recoverySpeedTrend is a TrendDirection value', () => {
     const result = computeAllMetrics(normalInput);
     expect(['improving', 'declining', 'stable', 'insufficient']).toContain(
-      result.recoverySpeedTrend.value,
+      result.recoverySpeedTrend.value
     );
   });
 
