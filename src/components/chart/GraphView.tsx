@@ -123,7 +123,7 @@ export function GraphView({
 
       {/* Main chart area -- takes remaining vertical space */}
       <div
-        className={clsx('min-h-0 flex-1', isMobile ? 'px-4' : 'px-6')}
+        className={clsx('min-h-0 flex-1 overflow-visible', isMobile ? 'px-4' : 'px-6')}
         style={{ minHeight: '200px' }}
       >
         <PostureChart records={records} metadata={metadata} />

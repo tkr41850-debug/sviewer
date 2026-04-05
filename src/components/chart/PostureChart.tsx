@@ -160,9 +160,9 @@ export function PostureChart({
   const ChartComponent = activeEngine === 'visx' ? VisxAdapter : RechartsAdapter;
 
   return (
-    <div className="relative flex h-full w-full flex-col">
-      {/* Top bar: comparison controls + settings */}
-      <div className="flex items-center justify-between px-2 py-1">
+    <div className="relative flex h-full w-full flex-col overflow-visible">
+      {/* Top bar: comparison controls + settings (overflow-visible for dropdown) */}
+      <div className="flex items-center justify-between px-2 py-1 overflow-visible">
         <DayComparison records={records} />
         <SettingsDropdown />
       </div>

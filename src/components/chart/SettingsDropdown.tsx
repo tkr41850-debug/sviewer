@@ -68,7 +68,7 @@ export function SettingsDropdown() {
 
       {open && (
         <div
-          className="absolute right-0 top-full z-50 mt-1 min-w-[180px] rounded-lg border shadow-lg"
+          className="absolute right-0 top-full z-50 mt-1 min-w-[180px] rounded-lg border shadow-lg max-h-[calc(100vh-80px)] overflow-auto"
           style={{
             backgroundColor: 'var(--color-surface)',
             borderColor: 'var(--color-border)',
