@@ -3,6 +3,7 @@ phase: "02"
 phase_name: "Time-Series Graph & Theme"
 status: draft
 created: "2026-04-05"
+revised: "2026-04-05"
 design_system: manual (Tailwind v4 + CSS custom properties)
 ---
 
@@ -49,15 +50,14 @@ design_system: manual (Tailwind v4 + CSS custom properties)
 
 **Font family:** System font stack via Tailwind default (`font-sans`). No custom fonts.
 
+**Weights used this phase:** 2 weights only — 400 (regular) and 600 (semibold).
+
 | Role | Size | Weight | Line Height | Usage |
 |------|------|--------|-------------|-------|
-| Page heading | 28px | 600 (semibold) | 1.15 | "Drop your slouch data here" (upload), not used on graph view |
-| Chart title | 16px | 600 (semibold) | 1.4 | None — no chart title displayed; the graph IS the page |
-| Body / controls | 14px | 400 (regular) | 1.5 | Threshold label, unit toggle text, axis labels |
-| Tooltip text | 13px | 500 (medium) | 1.4 | Tooltip content lines |
-| Axis tick labels | 12px | 400 (regular) | 1.0 | X-axis timestamps, Y-axis delta values |
+| Body / controls | 14px | 400 (regular) | 1.5 | Threshold label, unit toggle text, empty-state messages |
+| Axis ticks / tooltip | 12px | 400 (regular) | 1.0 | X-axis timestamps, Y-axis delta values, tooltip content lines |
 
-**Weights used this phase:** 400 (regular), 500 (medium), 600 (semibold) — 3 weights max.
+**Note:** 28px (page heading) and 16px (chart title) are defined in Phase 1 and are not part of this phase's graph view typography. Heading weight 600 (semibold) is reserved for future phases that add headings to the graph view; it is declared here so downstream phases can reference it but has no usage in the Phase 2 graph layout.
 
 **Axis label formatting:**
 - X-axis: `HH:MM` for ranges under 24h, `MMM dd HH:MM` for multi-day
@@ -234,7 +234,7 @@ App
 
 | Interaction | Behavior |
 |-------------|----------|
-| "Load new file" link | Dispatches `RESET` action, returns to upload page |
+| "Load new file" link | Dispatches `RESET` action, returns to upload page. No confirmation dialog needed — action is low-stakes and easily reversible by re-uploading the same file. |
 | Browser back | No special handling this phase (deferred to Phase 5 URL state) |
 
 ## 8. States
@@ -265,7 +265,7 @@ App
 |---------|------|-------|
 | Threshold input label | `Threshold` | Displayed to left of numeric input |
 | Unit toggle options | `%` / `px` | Two-option segmented control or dropdown |
-| Load new file link | `Load new file` | Bottom-left of graph view, styled as text link with underline |
+| Load new file link | `Load new file` | Bottom-left of graph view, styled as text link with underline. No confirmation needed — low-stakes, easily reversible action. |
 
 ### Tooltip Content
 
@@ -378,4 +378,5 @@ No other new dependencies required. `date-fns` (already installed) handles times
 ---
 
 _Contract created: 2026-04-05_
+_Revised: 2026-04-05 — Fix typography (2 weights, 2 sizes for graph view), add "Load new file" no-confirmation note_
 _Status: draft — awaiting checker validation_
