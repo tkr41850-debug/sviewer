@@ -102,13 +102,14 @@ Plans:
 3. User can overlay two different days on the same graph for day-over-day posture comparison
 4. User can click on graph points to add text annotations that persist while the data is loaded
 5. **Quality gate**: All tests pass (`vitest run`), formatting is clean (`prettier --check .`), and linting is clean (`eslint .`) with zero errors
-   **Plans**: TBD
+   **Plans**: 3 plans
    **UI hint**: yes
 
 Plans:
 
-- [ ] 04-01: TBD
-- [ ] 04-02: TBD
+- [ ] 04-01-PLAN.md — Define ChartAdapterProps interface, install visx, create ChartStore, build SettingsDropdown and EngineLabel
+- [ ] 04-02-PLAN.md — Refactor Recharts into RechartsAdapter, build VisxAdapter with full feature parity, wire engine switching
+- [ ] 04-03-PLAN.md — Implement day-over-day comparison and clickable graph annotations in both engines
 
 ### Phase 5: Export & Polish
 
@@ -139,5 +140,5 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 1. Data Pipeline              | 4/4 | Complete   | 2026-04-05 |
 | 2. Time-Series Graph & Theme  | 0/3            | Planned | -         |
 | 3. Metrics Engine & Dashboard | 0/4            | Planned | -         |
-| 4. Dual Chart Engine          | 0/0            | Not started | -         |
+| 4. Dual Chart Engine          | 0/3            | Planned | -         |
 | 5. Export & Polish            | 0/0            | Not started | -         |
