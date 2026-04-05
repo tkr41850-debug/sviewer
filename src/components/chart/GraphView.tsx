@@ -40,6 +40,7 @@ export function GraphView({
     value: 20,
     unit: 'px',
     direction: '>',
+    invertY: true,
   });
   const [visibleDomain, setVisibleDomain] = useState<[number, number] | null>(null);
   const [isMobile, setIsMobile] = useState(

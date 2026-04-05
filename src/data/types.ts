@@ -79,6 +79,8 @@ export interface ThresholdConfig {
   unit: 'px' | '%';
   /** Comparison direction: '>' means deltaY > threshold is slouching, '<' means deltaY < threshold. */
   direction: '>' | '<';
+  /** When true, Y-axis is inverted so larger values render lower (physically lower = bigger Y). Default: true. */
+  invertY: boolean;
 }
 
 /** Which chart rendering engine is active. */
@@ -138,4 +140,6 @@ export interface ChartAdapterProps {
   normalizeTimeAxis?: boolean;
   /** Comparison direction: '>' means deltaY > threshold is slouching (larger y = physically lower). Default: '>'. */
   direction?: '>' | '<';
+  /** When true, Y-axis is inverted so larger values render lower (bigger Y = physically lower). Default: true. */
+  invertY?: boolean;
 }

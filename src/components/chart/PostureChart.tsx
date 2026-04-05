@@ -57,6 +57,7 @@ export function PostureChart({
     value: 20,
     unit: 'px',
     direction: '>',
+    invertY: true,
   });
   const [visibleDomain, setVisibleDomain] = useState<[number, number] | null>(null);
 
@@ -151,6 +152,8 @@ export function PostureChart({
     comparisonLabel: comparison.day2 ? format(parseISO(comparison.day2), 'MMM dd') : undefined,
     primaryLabel: comparison.day1 ? format(parseISO(comparison.day1), 'MMM dd') : undefined,
     normalizeTimeAxis: comparison.enabled && !!comparison.day1 && !!comparison.day2,
+    direction: threshold.direction,
+    invertY: threshold.invertY,
   };
 
   // Per D-02: instant swap (no animation/crossfade)

@@ -57,6 +57,7 @@ export function RechartsAdapter({
   primaryLabel,
   normalizeTimeAxis,
   direction = '>',
+  invertY = true,
 }: ChartAdapterProps) {
   const colors = useChartColors();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -253,6 +254,7 @@ export function RechartsAdapter({
             tickFormatter={formatYAxis}
             tick={{ fontSize: 12, fill: colors.textSecondary }}
             stroke={colors.chartGrid}
+            reversed={invertY}
           />
 
           {/* Screen-off bands as ReferenceArea */}

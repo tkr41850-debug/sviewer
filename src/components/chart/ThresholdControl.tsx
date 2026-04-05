@@ -78,6 +78,13 @@ export function ThresholdControl({
     [threshold, onThresholdChange]
   );
 
+  const handleInvertYChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      onThresholdChange({ ...threshold, invertY: e.target.checked });
+    },
+    [threshold, onThresholdChange]
+  );
+
   const selectStyle = {
     minHeight: '44px',
     borderColor: 'var(--color-border)',
@@ -146,6 +153,25 @@ export function ThresholdControl({
         <option value="%">%</option>
         <option value="px">px</option>
       </select>
+      <label
+        className="flex items-center gap-1.5 select-none"
+        style={{
+          fontSize: '14px',
+          fontWeight: 400,
+          color: 'var(--color-text-secondary)',
+          marginLeft: '4px',
+        }}
+      >
+        <input
+          type="checkbox"
+          checked={threshold.invertY}
+          onChange={handleInvertYChange}
+          aria-label="Invert Y axis"
+          className="rounded"
+          style={{ accentColor: 'var(--color-accent)' }}
+        />
+        Invert Y
+      </label>
     </div>
   );
 }

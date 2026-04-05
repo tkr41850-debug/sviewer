@@ -109,6 +109,7 @@ export function VisxAdapter({
   onAnnotationUpdate,
   onAnnotationDelete,
   direction = '>',
+  invertY = true,
 }: ChartAdapterProps) {
   const colors = useChartColors();
 
@@ -212,7 +213,10 @@ export function VisxAdapter({
           const yPadding = (yMax - yMin) * 0.1 || 10;
           const yScale = scaleLinear<number>({
             domain: [yMin - yPadding, yMax + yPadding],
-            range: [height - margin.bottom, margin.top],
+            // invertY: larger Y values render lower (bigger Y = physically lower)
+            range: invertY
+              ? [margin.top, height - margin.bottom]
+              : [height - margin.bottom, margin.top],
           });
 
           // Store scales in refs for AnnotationLayer access
