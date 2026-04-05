@@ -3,15 +3,15 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: executing
-stopped_at: Phase 5 context gathered
-last_updated: "2026-04-05T09:40:22.437Z"
+stopped_at: Phase 6 context gathered
+last_updated: "2026-04-05T09:56:29.575Z"
 last_activity: 2026-04-05 -- Phase 4 planning complete
 progress:
-  total_phases: 5
+  total_phases: 6
   completed_phases: 1
-  total_plans: 14
-  completed_plans: 4
-  percent: 29
+  total_plans: 15
+  completed_plans: 6
+  percent: 40
 ---
 
 # Project State
@@ -79,6 +79,10 @@ Recent decisions affecting current work:
 - [Phase 01-data-pipeline]: Vite ?worker syntax for Web Worker import — NOT new URL(...); required by Rolldown bundler for correct chunking
 - [Phase 01-data-pipeline]: URL param data loading is synchronous (no worker) with 50KB guard — small payloads parse in <5ms; worker overhead would add latency
 
+### Roadmap Evolution
+
+- Phase 6 added: github.io pages export with workflow to run ci (tests/format/lint)
+
 ### Pending Todos
 
 None yet.
@@ -91,6 +95,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-04-05T09:22:29.206Z
-Stopped at: Phase 5 context gathered
-Resume file: .planning/phases/05-export-polish/05-CONTEXT.md
+Last session: 2026-04-05T09:56:29.565Z
+Stopped at: Phase 6 context gathered
+Resume file: .planning/phases/06-github-io-pages-export-with-workflow-to-run-ci-tests-format-/06-CONTEXT.md
