@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import clsx from 'clsx';
 import { useDataDispatch } from '../../stores/dataStore';
 import { downsampleForChart } from '../../data/normalizer';
-import { MainChart } from './MainChart';
+import { PostureChart } from './PostureChart';
 import { MinimapBrush } from './MinimapBrush';
 import { ThresholdControl } from './ThresholdControl';
 import type { PostureRecord, ThresholdConfig, ParseResult } from '../../data/types';
@@ -125,13 +125,7 @@ export function GraphView({
         className={clsx('min-h-0 flex-1', isMobile ? 'px-4' : 'px-6')}
         style={{ minHeight: '200px' }}
       >
-        <MainChart
-          data={downsampledPoints}
-          thresholdPx={thresholdPx}
-          visibleDomain={visibleDomain ?? undefined}
-          annotations={[]}
-          direction={threshold.direction}
-        />
+        <PostureChart records={records} metadata={metadata} />
       </div>
 
       {/* Gap between chart and minimap */}
