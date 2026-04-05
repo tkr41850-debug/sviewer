@@ -63,8 +63,8 @@ Plans:
 
 Plans:
 
-- [ ] 02-01-PLAN.md — Install Recharts, add chart CSS tokens, create ThemeProvider + useCSSVar hook, wire theme and RESET action
-- [ ] 02-02-PLAN.md — Build core chart components: MainChart, PostureChart, ChartTooltip, ScreenOffBand
+- [x] 02-01-PLAN.md — Install Recharts, add chart CSS tokens, create ThemeProvider + useCSSVar hook, wire theme and RESET action
+- [x] 02-02-PLAN.md — Build core chart components: MainChart, PostureChart, ChartTooltip, ScreenOffBand
 - [ ] 02-03-PLAN.md — Build GraphView layout, ThresholdControl, MinimapBrush, and wire App.tsx graph view
 
 ### Phase 3: Metrics Engine & Dashboard
@@ -123,12 +123,12 @@ Plans:
 3. URL reflects current view state (time range, threshold, chart engine) so users can share links
 4. User can navigate with keyboard shortcuts (arrows to pan, +/- to zoom, r to reset, t to toggle theme, ? for help)
 5. **Quality gate**: All tests pass (`vitest run`), formatting is clean (`prettier --check .`), and linting is clean (`eslint .`) with zero errors
-   **Plans**: TBD
+   **Plans**: 2 plans
 
 Plans:
 
-- [ ] 05-01: TBD
-- [ ] 05-02: TBD
+- [ ] 05-01-PLAN.md — Install html-to-image, add theme override CSS, create ViewStore, implement export hooks (CSV/PNG) and URL state hook
+- [ ] 05-02-PLAN.md — Build keyboard shortcuts, export dropdown, copy link, help modal, key toast, toolbar; wire into App.tsx
 
 ## Progress
 
@@ -141,4 +141,14 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | 2. Time-Series Graph & Theme  | 0/3            | Planned | -         |
 | 3. Metrics Engine & Dashboard | 0/4            | Planned | -         |
 | 4. Dual Chart Engine          | 0/3            | Planned | -         |
-| 5. Export & Polish            | 0/0            | Not started | -         |
+| 5. Export & Polish            | 0/2            | Planned | -         |
+
+### Phase 6: github.io pages export with workflow to run ci (tests/format/lint)
+
+**Goal:** [To be planned]
+**Requirements**: TBD
+**Depends on:** Phase 5
+**Plans:** 0 plans
+
+Plans:
+- [ ] TBD (run /gsd-plan-phase 6 to break down)
