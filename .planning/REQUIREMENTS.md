@@ -25,6 +25,12 @@ Requirements for initial release. Each maps to roadmap phases.
 - [ ] **PROC-05**: App normalizes all timestamps to Date objects regardless of input format
 - [ ] **PROC-06**: App applies LTTB downsampling for large datasets before charting
 
+### Developer Tooling
+
+- [ ] **TOOL-01**: Vitest is configured and running with test coverage for data loading/processing logic
+- [ ] **TOOL-02**: Prettier is configured and enforced (`prettier --check .` passes with zero violations)
+- [ ] **TOOL-03**: ts-eslint is configured and enforced (`eslint .` passes with zero errors)
+
 ### Time-Series Graph
 
 - [ ] **GRPH-01**: App renders time-series line graph with X=time, Y=delta Y-position
@@ -104,7 +110,7 @@ Explicitly excluded. Documented to prevent scope creep.
 | Real-time streaming data | App processes completed JSON files, not live feeds |
 | User accounts / authentication | Fully client-side, stateless by design |
 | Backend / API / database | Everything runs in the browser |
-| AI posture recommendations | Not a health advice tool — pure data visualization |
+| AI posture recommendations | Not a health advice tool -- pure data visualization |
 | Population comparison | No backend for aggregate data; self-comparison is more actionable |
 | Push notifications | Data viewer, not a posture trainer |
 | Multi-user comparison | Privacy concerns; reference rects differ per person |
@@ -117,65 +123,68 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| LOAD-01 | — | Pending |
-| LOAD-02 | — | Pending |
-| LOAD-03 | — | Pending |
-| LOAD-04 | — | Pending |
-| LOAD-05 | — | Pending |
-| LOAD-06 | — | Pending |
-| PROC-01 | — | Pending |
-| PROC-02 | — | Pending |
-| PROC-03 | — | Pending |
-| PROC-04 | — | Pending |
-| PROC-05 | — | Pending |
-| PROC-06 | — | Pending |
-| GRPH-01 | — | Pending |
-| GRPH-02 | — | Pending |
-| GRPH-03 | — | Pending |
-| GRPH-04 | — | Pending |
-| GRPH-05 | — | Pending |
-| GRPH-06 | — | Pending |
-| GRPH-07 | — | Pending |
-| GRPH-08 | — | Pending |
-| GRPH-09 | — | Pending |
-| GRPH-10 | — | Pending |
-| GRPH-11 | — | Pending |
-| METR-01 | — | Pending |
-| METR-02 | — | Pending |
-| METR-03 | — | Pending |
-| METR-04 | — | Pending |
-| METR-05 | — | Pending |
-| METR-06 | — | Pending |
-| METR-07 | — | Pending |
-| METR-08 | — | Pending |
-| METR-09 | — | Pending |
-| METR-10 | — | Pending |
-| METR-11 | — | Pending |
-| METR-12 | — | Pending |
-| METR-13 | — | Pending |
-| METR-14 | — | Pending |
-| METR-15 | — | Pending |
-| METR-16 | — | Pending |
-| METR-17 | — | Pending |
-| METR-18 | — | Pending |
-| VIEW-01 | — | Pending |
-| VIEW-02 | — | Pending |
-| VIEW-03 | — | Pending |
-| VIEW-04 | — | Pending |
-| VIEW-05 | — | Pending |
-| EXPT-01 | — | Pending |
-| EXPT-02 | — | Pending |
-| EXPT-03 | — | Pending |
-| THME-01 | — | Pending |
-| THME-02 | — | Pending |
-| THME-03 | — | Pending |
-| THME-04 | — | Pending |
+| LOAD-01 | Phase 1 | Pending |
+| LOAD-02 | Phase 1 | Pending |
+| LOAD-03 | Phase 1 | Pending |
+| LOAD-04 | Phase 1 | Pending |
+| LOAD-05 | Phase 1 | Pending |
+| LOAD-06 | Phase 1 | Pending |
+| PROC-01 | Phase 1 | Pending |
+| PROC-02 | Phase 1 | Pending |
+| PROC-03 | Phase 1 | Pending |
+| PROC-04 | Phase 1 | Pending |
+| PROC-05 | Phase 1 | Pending |
+| PROC-06 | Phase 1 | Pending |
+| TOOL-01 | Phase 1 | Pending |
+| TOOL-02 | Phase 1 | Pending |
+| TOOL-03 | Phase 1 | Pending |
+| GRPH-01 | Phase 2 | Pending |
+| GRPH-02 | Phase 2 | Pending |
+| GRPH-03 | Phase 2 | Pending |
+| GRPH-04 | Phase 2 | Pending |
+| GRPH-05 | Phase 2 | Pending |
+| GRPH-06 | Phase 2 | Pending |
+| GRPH-07 | Phase 4 | Pending |
+| GRPH-08 | Phase 4 | Pending |
+| GRPH-09 | Phase 4 | Pending |
+| GRPH-10 | Phase 4 | Pending |
+| GRPH-11 | Phase 4 | Pending |
+| METR-01 | Phase 3 | Pending |
+| METR-02 | Phase 3 | Pending |
+| METR-03 | Phase 3 | Pending |
+| METR-04 | Phase 3 | Pending |
+| METR-05 | Phase 3 | Pending |
+| METR-06 | Phase 3 | Pending |
+| METR-07 | Phase 3 | Pending |
+| METR-08 | Phase 3 | Pending |
+| METR-09 | Phase 3 | Pending |
+| METR-10 | Phase 3 | Pending |
+| METR-11 | Phase 3 | Pending |
+| METR-12 | Phase 3 | Pending |
+| METR-13 | Phase 3 | Pending |
+| METR-14 | Phase 3 | Pending |
+| METR-15 | Phase 3 | Pending |
+| METR-16 | Phase 3 | Pending |
+| METR-17 | Phase 3 | Pending |
+| METR-18 | Phase 3 | Pending |
+| VIEW-01 | Phase 3 | Pending |
+| VIEW-02 | Phase 3 | Pending |
+| VIEW-03 | Phase 3 | Pending |
+| VIEW-04 | Phase 3 | Pending |
+| VIEW-05 | Phase 3 | Pending |
+| EXPT-01 | Phase 5 | Pending |
+| EXPT-02 | Phase 5 | Pending |
+| EXPT-03 | Phase 5 | Pending |
+| THME-01 | Phase 2 | Pending |
+| THME-02 | Phase 2 | Pending |
+| THME-03 | Phase 2 | Pending |
+| THME-04 | Phase 5 | Pending |
 
 **Coverage:**
-- v1 requirements: 52 total
-- Mapped to phases: 0
-- Unmapped: 52
+- v1 requirements: 56 total
+- Mapped to phases: 56
+- Unmapped: 0
 
 ---
 *Requirements defined: 2026-04-05*
-*Last updated: 2026-04-05 after initial definition*
+*Last updated: 2026-04-05 after roadmap revision (added TOOL-01, TOOL-02, TOOL-03)*
