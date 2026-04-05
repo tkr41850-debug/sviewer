@@ -9,21 +9,21 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Data Loading
 
-- [ ] **LOAD-01**: User can load JSON data via drag-and-drop onto the page
+- [x] **LOAD-01**: User can load JSON data via drag-and-drop onto the page
 - [ ] **LOAD-02**: User can load JSON data via file picker dialog
 - [ ] **LOAD-03**: User can load JSON data via inline URL parameter (`?data=[...]`)
-- [ ] **LOAD-04**: App auto-detects timestamp format (Unix seconds, Unix milliseconds, ISO strings)
-- [ ] **LOAD-05**: App validates JSON structure and shows specific error messages for malformed data
-- [ ] **LOAD-06**: App handles large files without freezing the UI (Web Worker for parsing)
+- [x] **LOAD-04**: App auto-detects timestamp format (Unix seconds, Unix milliseconds, ISO strings)
+- [x] **LOAD-05**: App validates JSON structure and shows specific error messages for malformed data
+- [x] **LOAD-06**: App handles large files without freezing the UI (Web Worker for parsing)
 
 ### Data Processing
 
-- [ ] **PROC-01**: App computes slouch state by comparing current rect midpoint Y to reference rect midpoint Y
-- [ ] **PROC-02**: App detects screen-off periods from null currentRect entries
-- [ ] **PROC-03**: App detects screen-off periods from timestamp gaps
-- [ ] **PROC-04**: App segments data into sessions based on screen-off gaps
-- [ ] **PROC-05**: App normalizes all timestamps to Date objects regardless of input format
-- [ ] **PROC-06**: App applies LTTB downsampling for large datasets before charting
+- [x] **PROC-01**: App computes slouch state by comparing current rect midpoint Y to reference rect midpoint Y
+- [x] **PROC-02**: App detects screen-off periods from null currentRect entries
+- [x] **PROC-03**: App detects screen-off periods from timestamp gaps
+- [x] **PROC-04**: App segments data into sessions based on screen-off gaps
+- [x] **PROC-05**: App normalizes all timestamps to Date objects regardless of input format
+- [x] **PROC-06**: App applies LTTB downsampling for large datasets before charting
 
 ### Developer Tooling
 
@@ -123,18 +123,18 @@ Which phases cover which requirements. Updated during roadmap creation.
 
 | Requirement | Phase   | Status  |
 | ----------- | ------- | ------- |
-| LOAD-01     | Phase 1 | Pending |
+| LOAD-01     | Phase 1 | Complete |
 | LOAD-02     | Phase 1 | Pending |
 | LOAD-03     | Phase 1 | Pending |
-| LOAD-04     | Phase 1 | Pending |
-| LOAD-05     | Phase 1 | Pending |
-| LOAD-06     | Phase 1 | Pending |
-| PROC-01     | Phase 1 | Pending |
-| PROC-02     | Phase 1 | Pending |
-| PROC-03     | Phase 1 | Pending |
-| PROC-04     | Phase 1 | Pending |
-| PROC-05     | Phase 1 | Pending |
-| PROC-06     | Phase 1 | Pending |
+| LOAD-04     | Phase 1 | Complete |
+| LOAD-05     | Phase 1 | Complete |
+| LOAD-06     | Phase 1 | Complete |
+| PROC-01     | Phase 1 | Complete |
+| PROC-02     | Phase 1 | Complete |
+| PROC-03     | Phase 1 | Complete |
+| PROC-04     | Phase 1 | Complete |
+| PROC-05     | Phase 1 | Complete |
+| PROC-06     | Phase 1 | Complete |
 | TOOL-01     | Phase 1 | Complete |
 | TOOL-02     | Phase 1 | Complete |
 | TOOL-03     | Phase 1 | Complete |

@@ -41,7 +41,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 
 - [x] 01-01-PLAN.md — Scaffold Vite project, install all dependencies, configure Tailwind v4 CSS tokens
-- [ ] 01-02-PLAN.md — Define canonical data types contract (types.ts) and write RED test scaffolds
+- [x] 01-02-PLAN.md — Define canonical data types contract (types.ts) and write RED test scaffolds
 - [ ] 01-03-PLAN.md — Implement data pipeline: normalizer, validator, and parser (tests GREEN)
 - [ ] 01-04-PLAN.md — Build Web Worker, data store, upload UI components, and App shell; end-to-end verify
 
