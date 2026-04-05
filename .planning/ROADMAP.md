@@ -14,10 +14,11 @@ SViewer transforms raw slouch-tracking JSON into visual posture insights. The ro
 Decimal phases appear between their surrounding integers in numeric order.
 
 - [x] **Phase 1: Data Pipeline** - Load, parse, validate, and process slouch-tracking JSON from any input method; establish quality tooling (completed 2026-04-05)
-- [ ] **Phase 2: Time-Series Graph & Theme** - Render the hero chart with one engine, themed and responsive
+- [x] **Phase 2: Time-Series Graph & Theme** - Render the hero chart with one engine, themed and responsive (completed 2026-04-05)
 - [ ] **Phase 3: Metrics Engine & Dashboard** - Compute all posture metrics and display them in a comprehensive dashboard
 - [ ] **Phase 4: Dual Chart Engine** - Add visx/D3 engine and advanced graph interactions
 - [ ] **Phase 5: Export & Polish** - CSV/PNG export, keyboard shortcuts, and final refinements
+- [x] **Phase 6: GitHub Pages + CI** - CI pipeline and GitHub Pages deployment (completed 2026-04-05)
 
 ## Phase Details
 
@@ -147,18 +148,18 @@ Plans:
 
 Plans:
 
-- [ ] 06-01-PLAN.md — Add resolvePagesBase() to vite.config.ts, format:check script to package.json, create CI + Pages deploy workflow
+- [x] 06-01-PLAN.md — Add resolvePagesBase() to vite.config.ts, format:check script to package.json, create CI + Pages deploy workflow
 
 ## Progress
 
 **Execution Order:**
 Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5 -> 6
 
-| Phase                         | Plans Complete | Status      | Completed |
-| ----------------------------- | -------------- | ----------- | --------- |
-| 1. Data Pipeline              | 4/4 | Complete   | 2026-04-05 |
-| 2. Time-Series Graph & Theme  | 0/3            | Planned | -         |
-| 3. Metrics Engine & Dashboard | 0/4            | Planned | -         |
-| 4. Dual Chart Engine          | 0/3            | Planned | -         |
-| 5. Export & Polish            | 0/2            | Planned | -         |
-| 6. GitHub Pages + CI          | 0/1            | Planned | -         |
+| Phase                         | Plans Complete | Status      | Completed  |
+| ----------------------------- | -------------- | ----------- | ---------- |
+| 1. Data Pipeline              | 4/4            | Complete    | 2026-04-05 |
+| 2. Time-Series Graph & Theme  | 3/3            | Complete    | 2026-04-05 |
+| 3. Metrics Engine & Dashboard | 0/4            | Planned     | -          |
+| 4. Dual Chart Engine          | 0/3            | Planned     | -          |
+| 5. Export & Polish            | 0/2            | Planned     | -          |
+| 6. GitHub Pages + CI          | 1/1            | Complete    | 2026-04-05 |
