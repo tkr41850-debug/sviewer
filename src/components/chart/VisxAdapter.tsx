@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useRef } from 'react';
 import { format } from 'date-fns';
 import { ParentSize } from '@visx/responsive';
 import { scaleLinear, scaleTime } from '@visx/scale';
@@ -10,6 +10,7 @@ import { localPoint } from '@visx/event';
 import { curveMonotoneX } from 'd3-shape';
 import { useChartColors } from '../../hooks/useCSSVar';
 import { computeScreenOffRegions } from './ScreenOffBand';
+import { AnnotationLayer } from './AnnotationLayer';
 import type { ChartAdapterProps, PostureRecord } from '../../data/types';
 
 const margin = { top: 16, right: 16, bottom: 32, left: 48 };
@@ -105,8 +106,29 @@ export function VisxAdapter({
   comparisonLabel,
   primaryLabel,
   normalizeTimeAxis,
+  onAnnotationUpdate,
+  onAnnotationDelete,
 }: ChartAdapterProps) {
   const colors = useChartColors();
+
+  // Store latest scale functions in refs for AnnotationLayer (computed inside ParentSize)
+  const xScaleRef = useRef<((val: number | Date) => number) | null>(null);
+  const yScaleRef = useRef<((val: number) => number) | null>(null);
+
+  // Annotation coordinate mappers using stored scales
+  const timeToX = useCallback(
+    (time: number) => {
+      if (!xScaleRef.current) return 0;
+      const val = normalizeTimeAxis ? toMinutesSinceMidnight(time) : time;
+      return Number(xScaleRef.current(normalizeTimeAxis ? val : new Date(val))) || 0;
+    },
+    [normalizeTimeAxis]
+  );
+
+  const deltaYToY = useCallback((deltaY: number) => {
+    if (!yScaleRef.current) return 0;
+    return Number(yScaleRef.current(deltaY)) || 0;
+  }, []);
 
   // Suppress unused var warning
   void onBrushChange;
@@ -191,6 +213,10 @@ export function VisxAdapter({
             domain: [yMin - yPadding, yMax + yPadding],
             range: [height - margin.bottom, margin.top],
           });
+
+          // Store scales in refs for AnnotationLayer access
+          xScaleRef.current = xScale as (val: number | Date) => number;
+          yScaleRef.current = yScale as (val: number) => number;
 
           // X/Y accessors for visx shapes
           const xPos = (d: PostureRecord) => {
@@ -488,6 +514,15 @@ export function VisxAdapter({
           );
         }}
       </ParentSize>
+
+      {/* Annotation overlay — positioned absolutely over chart (D-07/D-08/D-09) */}
+      <AnnotationLayer
+        annotations={annotations}
+        timeToX={timeToX}
+        deltaYToY={deltaYToY}
+        onUpdate={onAnnotationUpdate}
+        onDelete={onAnnotationDelete}
+      />
 
       {/* Tooltip overlay */}
       {tooltipOpen && tooltipData && tooltipLeft != null && tooltipTop != null && (

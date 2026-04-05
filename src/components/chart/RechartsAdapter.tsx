@@ -1,4 +1,4 @@
-import { useMemo, useCallback } from 'react';
+import { useMemo, useCallback, useRef } from 'react';
 import { format } from 'date-fns';
 import {
   ComposedChart,
@@ -16,6 +16,7 @@ import {
 import { useChartColors } from '../../hooks/useCSSVar';
 import { computeScreenOffRegions } from './ScreenOffBand';
 import { ChartTooltip } from './ChartTooltip';
+import { AnnotationLayer } from './AnnotationLayer';
 import type { ChartAdapterProps } from '../../data/types';
 
 interface ChartPoint {
@@ -49,12 +50,15 @@ export function RechartsAdapter({
   onBrushChange,
   annotations,
   onAnnotationCreate,
+  onAnnotationUpdate,
+  onAnnotationDelete,
   comparisonData,
   comparisonLabel,
   primaryLabel,
   normalizeTimeAxis,
 }: ChartAdapterProps) {
   const colors = useChartColors();
+  const containerRef = useRef<HTMLDivElement>(null);
 
   // Suppress unused var warning — onBrushChange passed for future brush wiring
   void onBrushChange;
@@ -152,7 +156,54 @@ export function RechartsAdapter({
 
   const formatYAxis = (v: number): string => `${v}px`;
 
-  // Handle chart click — find nearest data point and create annotation
+  // Margins must match ComposedChart margin prop
+  const marginLeft = 48;
+  const marginRight = 16;
+  const marginTop = 16;
+  const marginBottom = 32;
+
+  // Map annotation time to X pixel position within the chart container
+  const timeToX = useCallback(
+    (time: number) => {
+      if (!containerRef.current) return 0;
+      const rect = containerRef.current.getBoundingClientRect();
+      const chartWidth = rect.width - marginLeft - marginRight;
+      const timeVal = normalizeTimeAxis ? toMinutesSinceMidnight(time) : time;
+      let domainMin: number, domainMax: number;
+      if (normalizeTimeAxis) {
+        domainMin = 0;
+        domainMax = 1440;
+      } else if (visibleDomain) {
+        [domainMin, domainMax] = visibleDomain;
+      } else {
+        domainMin = data.length > 0 ? Math.min(...data.map((d) => d.time)) : 0;
+        domainMax = data.length > 0 ? Math.max(...data.map((d) => d.time)) : 1;
+      }
+      if (domainMax === domainMin) return marginLeft;
+      return marginLeft + ((timeVal - domainMin) / (domainMax - domainMin)) * chartWidth;
+    },
+    [data, visibleDomain, normalizeTimeAxis]
+  );
+
+  // Map annotation deltaY to Y pixel position within the chart container
+  const deltaYToY = useCallback(
+    (deltaY: number) => {
+      if (!containerRef.current) return 0;
+      const rect = containerRef.current.getBoundingClientRect();
+      const chartHeight = rect.height - marginTop - marginBottom;
+      const yValues = data.filter((d) => d.deltaY !== null).map((d) => d.deltaY!);
+      const yMin = yValues.length > 0 ? Math.min(...yValues, -thresholdPx) : -thresholdPx;
+      const yMax = yValues.length > 0 ? Math.max(...yValues, thresholdPx) : thresholdPx;
+      const padding = (yMax - yMin) * 0.1 || 10;
+      const fullMin = yMin - padding;
+      const fullMax = yMax + padding;
+      if (fullMax === fullMin) return marginTop;
+      return marginTop + ((fullMax - deltaY) / (fullMax - fullMin)) * chartHeight;
+    },
+    [data, thresholdPx]
+  );
+
+  // Handle chart click — find nearest data point and create annotation (D-07)
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleChartClick = useCallback(
     (chartEvent: any) => {
@@ -174,7 +225,12 @@ export function RechartsAdapter({
   }, [normalizeTimeAxis, visibleDomain]);
 
   return (
-    <div role="img" aria-label="Posture data time-series graph" className="relative h-full w-full">
+    <div
+      ref={containerRef}
+      role="img"
+      aria-label="Posture data time-series graph"
+      className="relative h-full w-full"
+    >
       <ResponsiveContainer width="100%" height="100%">
         <ComposedChart
           data={mergedChartData}
@@ -294,6 +350,15 @@ export function RechartsAdapter({
           />
         </ComposedChart>
       </ResponsiveContainer>
+
+      {/* Annotation overlay — positioned absolutely over chart (D-07/D-08/D-09) */}
+      <AnnotationLayer
+        annotations={annotations}
+        timeToX={timeToX}
+        deltaYToY={deltaYToY}
+        onUpdate={onAnnotationUpdate}
+        onDelete={onAnnotationDelete}
+      />
 
       {/* Comparison legend */}
       {comparisonData && primaryLabel && comparisonLabel && (
