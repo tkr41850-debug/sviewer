@@ -42,8 +42,8 @@ Requirements for initial release. Each maps to roadmap phases.
 - [x] **GRPH-07**: User can toggle between Recharts and visx/D3 charting engines
 - [x] **GRPH-08**: Both chart engines render identical data with consistent interactions
 - [x] **GRPH-09**: Smooth animated transitions when switching time ranges or chart engines
-- [ ] **GRPH-10**: User can overlay two days on the same graph for day-over-day comparison
-- [ ] **GRPH-11**: User can click on graph points to add text annotations
+- [x] **GRPH-10**: User can overlay two days on the same graph for day-over-day comparison
+- [x] **GRPH-11**: User can click on graph points to add text annotations
 
 ### Dashboard Metrics
 
@@ -147,8 +147,8 @@ Which phases cover which requirements. Updated during roadmap creation.
 | GRPH-07     | Phase 4 | Complete |
 | GRPH-08     | Phase 4 | Complete |
 | GRPH-09     | Phase 4 | Complete |
-| GRPH-10     | Phase 4 | Pending |
-| GRPH-11     | Phase 4 | Pending |
+| GRPH-10     | Phase 4 | Complete |
+| GRPH-11     | Phase 4 | Complete |
 | METR-01     | Phase 3 | Pending |
 | METR-02     | Phase 3 | Pending |
 | METR-03     | Phase 3 | Pending |

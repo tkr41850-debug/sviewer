@@ -110,7 +110,7 @@ Plans:
 
 - [x] 04-01-PLAN.md — Define ChartAdapterProps interface, install visx, create ChartStore, build SettingsDropdown and EngineLabel
 - [x] 04-02-PLAN.md — Refactor Recharts into RechartsAdapter, build VisxAdapter with full feature parity, wire engine switching
-- [ ] 04-03-PLAN.md — Implement day-over-day comparison and clickable graph annotations in both engines
+- [x] 04-03-PLAN.md — Implement day-over-day comparison and clickable graph annotations in both engines
 
 ### Phase 5: Export & Polish
 
