@@ -77,6 +77,8 @@ export interface ThresholdConfig {
   value: number;
   /** Unit of the threshold: 'px' for absolute pixels, '%' for percentage of referenceY. */
   unit: 'px' | '%';
+  /** Comparison direction: '>' means deltaY > threshold is slouching, '<' means deltaY < threshold. */
+  direction: '>' | '<';
 }
 
 /** Which chart rendering engine is active. */
@@ -134,4 +136,6 @@ export interface ChartAdapterProps {
   primaryLabel?: string;
   /** When true, X-axis shows time-of-day (00:00-23:59) instead of absolute timestamps. Per D-06. */
   normalizeTimeAxis?: boolean;
+  /** Comparison direction: '>' means deltaY > threshold is slouching (larger y = physically lower). Default: '>'. */
+  direction?: '>' | '<';
 }

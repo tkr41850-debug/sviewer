@@ -56,6 +56,7 @@ export function RechartsAdapter({
   comparisonLabel,
   primaryLabel,
   normalizeTimeAxis,
+  direction = '>',
 }: ChartAdapterProps) {
   const colors = useChartColors();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -72,24 +73,25 @@ export function RechartsAdapter({
   // Compute screen-off regions
   const screenOffRegions = useMemo(() => computeScreenOffRegions(data), [data]);
 
-  // Prepare chart data with area fill splits
+  // Prepare chart data with area fill splits (one-sided threshold)
   const chartData: ChartPoint[] = useMemo(
     () =>
       data.map((r) => {
-        const absDelta = r.deltaY !== null ? Math.abs(r.deltaY) : null;
         const displayTime = normalizeTimeAxis ? toMinutesSinceMidnight(r.time) : r.time;
+        // One-sided: '>' means deltaY > threshold is slouching (larger y = physically lower)
+        const slouching =
+          r.deltaY !== null &&
+          (direction === '>' ? r.deltaY > thresholdPx : r.deltaY < -thresholdPx);
         return {
           time: r.time,
           displayTime,
           deltaY: r.deltaY,
-          goodFill:
-            r.deltaY !== null && absDelta !== null && absDelta <= thresholdPx ? r.deltaY : null,
-          slouchFill:
-            r.deltaY !== null && absDelta !== null && absDelta > thresholdPx ? r.deltaY : null,
+          goodFill: r.deltaY !== null && !slouching ? r.deltaY : null,
+          slouchFill: r.deltaY !== null && slouching ? r.deltaY : null,
           isScreenOff: r.isScreenOff,
         };
       }),
-    [data, thresholdPx, normalizeTimeAxis]
+    [data, thresholdPx, direction, normalizeTimeAxis]
   );
 
   // Prepare comparison data if provided
@@ -265,16 +267,9 @@ export function RechartsAdapter({
             />
           ))}
 
-          {/* Threshold dashed lines (positive and negative) */}
+          {/* Threshold dashed line (one-sided: larger y = physically lower) */}
           <ReferenceLine
-            y={thresholdPx}
-            stroke={colors.threshold}
-            strokeDasharray="6 4"
-            strokeWidth={2}
-            label={undefined}
-          />
-          <ReferenceLine
-            y={-thresholdPx}
+            y={direction === '>' ? thresholdPx : -thresholdPx}
             stroke={colors.threshold}
             strokeDasharray="6 4"
             strokeWidth={2}

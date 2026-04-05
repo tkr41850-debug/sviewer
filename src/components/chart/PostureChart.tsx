@@ -53,7 +53,11 @@ export function PostureChart({
   onThresholdChange,
   onVisibleDomainChange,
 }: PostureChartProps) {
-  const [threshold, setThreshold] = useState<ThresholdConfig>({ value: 15, unit: '%' });
+  const [threshold, setThreshold] = useState<ThresholdConfig>({
+    value: 20,
+    unit: 'px',
+    direction: '>',
+  });
   const [visibleDomain, setVisibleDomain] = useState<[number, number] | null>(null);
 
   const { activeEngine, annotations, comparison } = useChartState();

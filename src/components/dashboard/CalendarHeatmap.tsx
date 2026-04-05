@@ -24,6 +24,7 @@ export interface HeatmapData {
 interface CalendarHeatmapProps {
   records: PostureRecord[];
   thresholdPx: number;
+  direction?: '>' | '<';
 }
 
 // --- Helpers ---
@@ -32,7 +33,11 @@ interface CalendarHeatmapProps {
  * Compute heatmap data by grouping active records into (day, hour) cells.
  * Grid is bounded to 24 columns x number of distinct days (T-03-06 mitigation).
  */
-export function computeHeatmapData(records: PostureRecord[], thresholdPx: number): HeatmapData {
+export function computeHeatmapData(
+  records: PostureRecord[],
+  thresholdPx: number,
+  direction: '>' | '<' = '>'
+): HeatmapData {
   const cellMap = new Map<string, { total: number; slouching: number }>();
   const daySet = new Set<string>();
 
@@ -48,7 +53,8 @@ export function computeHeatmapData(records: PostureRecord[], thresholdPx: number
     daySet.add(day);
 
     const existing = cellMap.get(key);
-    const isSlouching = Math.abs(record.deltaY) > thresholdPx;
+    const isSlouching =
+      direction === '>' ? record.deltaY > thresholdPx : record.deltaY < -thresholdPx;
 
     if (existing) {
       existing.total++;
@@ -98,8 +104,8 @@ function formatDayLabel(isoDate: string): string {
 
 // --- Main component ---
 
-export function CalendarHeatmap({ records, thresholdPx }: CalendarHeatmapProps) {
-  const { cells, days } = computeHeatmapData(records, thresholdPx);
+export function CalendarHeatmap({ records, thresholdPx, direction = '>' }: CalendarHeatmapProps) {
+  const { cells, days } = computeHeatmapData(records, thresholdPx, direction);
 
   // Build cell lookup map for O(1) access
   const cellLookup = new Map<string, HeatmapCell>();

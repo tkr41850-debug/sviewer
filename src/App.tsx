@@ -88,12 +88,14 @@ function UploadPage() {
   );
 }
 
-/** Default threshold in pixels — used until GraphView computes the real value. */
+/** Default threshold in pixels — used until GraphView computes the real value.
+ * Default direction '>' means deltaY > threshold is slouching (larger y = physically lower). */
 const DEFAULT_THRESHOLD_PX = 20;
 
 export default function App() {
   const state = useDataState();
   const [thresholdPx, setThresholdPx] = useState(DEFAULT_THRESHOLD_PX);
+  const [direction, setDirection] = useState<'>' | '<'>('>');
 
   if (state.status === 'loaded') {
     return (
@@ -103,12 +105,14 @@ export default function App() {
           records={state.result.records}
           metadata={state.result.metadata}
           onThresholdPxChange={setThresholdPx}
+          onDirectionChange={setDirection}
         />
         {/* Dashboard — renders below graph, visible immediately on load (D-01, D-03) */}
         <Dashboard
           records={state.result.records}
           metadata={state.result.metadata}
           thresholdPx={thresholdPx}
+          direction={direction}
         />
       </div>
     );

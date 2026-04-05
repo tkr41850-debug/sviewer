@@ -53,13 +53,13 @@ export function ScoreBreakdown({
   const data = [
     { name: 'Good Posture', value: goodPercent },
     { name: 'Slouching', value: slouchPercent },
-    { name: 'Screen Off', value: screenOffPercent },
+    { name: 'Offscreen', value: screenOffPercent },
   ].filter((d) => d.value > 0);
 
   const colorMap: Record<string, string> = {
     'Good Posture': GOOD_COLOR,
     Slouching: destructiveColor,
-    'Screen Off': SCREEN_OFF_COLOR,
+    Offscreen: SCREEN_OFF_COLOR,
   };
 
   if (data.length === 0) {

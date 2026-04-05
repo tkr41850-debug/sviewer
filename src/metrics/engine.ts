@@ -17,6 +17,8 @@ export interface MetricsInput {
   records: PostureRecord[];
   metadata: ParseResult['metadata'];
   thresholdPx: number;
+  /** Comparison direction: '>' means deltaY > threshold is slouching. Default: '>'. */
+  direction?: '>' | '<';
 }
 
 // ─── Internal Helpers ─────────────────────────────────────────────
@@ -32,25 +34,36 @@ function computeActiveRecords(records: PostureRecord[]): PostureRecord[] {
   return records.filter((r) => !r.isScreenOff && r.deltaY !== null);
 }
 
-/** Determines whether a record is slouching based on threshold. */
-function isSlouching(record: PostureRecord, thresholdPx: number): boolean {
-  return record.deltaY !== null && Math.abs(record.deltaY) > thresholdPx;
+/** Determines whether a record is slouching based on threshold and direction. */
+function isSlouching(
+  record: PostureRecord,
+  thresholdPx: number,
+  direction: '>' | '<' = '>'
+): boolean {
+  if (record.deltaY === null) return false;
+  return direction === '>' ? record.deltaY > thresholdPx : record.deltaY < -thresholdPx;
 }
 
 /**
  * Walks active records and identifies consecutive runs of slouching vs good posture.
  * Only considers non-screen-off records with non-null deltaY.
  */
-function computeStreaks(records: PostureRecord[], thresholdPx: number): Streak[] {
+function computeStreaks(
+  records: PostureRecord[],
+  thresholdPx: number,
+  direction: '>' | '<' = '>'
+): Streak[] {
   const active = computeActiveRecords(records);
   if (active.length === 0) return [];
 
   const streaks: Streak[] = [];
-  let currentType: 'slouch' | 'good' = isSlouching(active[0], thresholdPx) ? 'slouch' : 'good';
+  let currentType: 'slouch' | 'good' = isSlouching(active[0], thresholdPx, direction)
+    ? 'slouch'
+    : 'good';
   let startTime = active[0].time;
 
   for (let i = 1; i < active.length; i++) {
-    const type = isSlouching(active[i], thresholdPx) ? 'slouch' : 'good';
+    const type = isSlouching(active[i], thresholdPx, direction) ? 'slouch' : 'good';
     if (type !== currentType) {
       streaks.push({ startTime, endTime: active[i - 1].time, type: currentType });
       currentType = type;
@@ -69,7 +82,8 @@ function computeStreaks(records: PostureRecord[], thresholdPx: number): Streak[]
  */
 function computeHourlyData(
   records: PostureRecord[],
-  thresholdPx: number
+  thresholdPx: number,
+  direction: '>' | '<' = '>'
 ): Map<number, { total: number; slouching: number }> {
   const active = computeActiveRecords(records);
   const hourMap = new Map<number, { total: number; slouching: number }>();
@@ -78,7 +92,7 @@ function computeHourlyData(
     const hour = new Date(record.time).getHours();
     const entry = hourMap.get(hour) ?? { total: 0, slouching: 0 };
     entry.total++;
-    if (isSlouching(record, thresholdPx)) {
+    if (isSlouching(record, thresholdPx, direction)) {
       entry.slouching++;
     }
     hourMap.set(hour, entry);
@@ -203,11 +217,12 @@ function insufficientMetrics(): DashboardMetrics {
  *
  * @param input.records - Full-resolution PostureRecord[] (not downsampled)
  * @param input.metadata - ParseResult metadata (startTime, endTime, sessionCount, etc.)
- * @param input.thresholdPx - Slouch threshold in pixels; abs(deltaY) > threshold = slouching
+ * @param input.thresholdPx - Slouch threshold in pixels
+ * @param input.direction - '>' means deltaY > threshold is slouching, '<' means deltaY < -threshold
  * @returns DashboardMetrics with all 18 fields, each wrapped in MetricValue with quality indicator
  */
 export function computeAllMetrics(input: MetricsInput): DashboardMetrics {
-  const { records, thresholdPx } = input;
+  const { records, thresholdPx, direction = '>' } = input;
 
   const activeRecords = computeActiveRecords(records);
 
@@ -216,11 +231,11 @@ export function computeAllMetrics(input: MetricsInput): DashboardMetrics {
     return insufficientMetrics();
   }
 
-  const slouchingRecords = activeRecords.filter((r) => isSlouching(r, thresholdPx));
-  const streaks = computeStreaks(records, thresholdPx);
+  const slouchingRecords = activeRecords.filter((r) => isSlouching(r, thresholdPx, direction));
+  const streaks = computeStreaks(records, thresholdPx, direction);
   const slouchStreaks = streaks.filter((s) => s.type === 'slouch');
   const goodStreaks = streaks.filter((s) => s.type === 'good');
-  const hourlyData = computeHourlyData(records, thresholdPx);
+  const hourlyData = computeHourlyData(records, thresholdPx, direction);
   const totalScreenTime = computeTotalScreenTime(records);
   const screenOffGaps = countScreenOffGaps(records);
 
@@ -352,7 +367,9 @@ export function computeAllMetrics(input: MetricsInput): DashboardMetrics {
   if (dayCount >= 2) {
     const dayScores: number[] = [];
     for (const [, dayRecords] of dayGroups) {
-      const daySlouchCount = dayRecords.filter((r) => isSlouching(r, thresholdPx)).length;
+      const daySlouchCount = dayRecords.filter((r) =>
+        isSlouching(r, thresholdPx, direction)
+      ).length;
       const daySlouchRate = safeDivide(daySlouchCount, dayRecords.length) * 100;
       dayScores.push(100 - daySlouchRate);
     }
@@ -387,7 +404,7 @@ export function computeAllMetrics(input: MetricsInput): DashboardMetrics {
     const hourIndex = Math.floor((record.time - startTime) / 3600000);
     const entry = hourlyScoreMap.get(hourIndex) ?? { slouching: 0, total: 0 };
     entry.total++;
-    if (isSlouching(record, thresholdPx)) entry.slouching++;
+    if (isSlouching(record, thresholdPx, direction)) entry.slouching++;
     hourlyScoreMap.set(hourIndex, entry);
   }
   const hourlyScoreEntries = Array.from(hourlyScoreMap.entries()).sort(([a], [b]) => a - b);
@@ -404,10 +421,10 @@ export function computeAllMetrics(input: MetricsInput): DashboardMetrics {
   // ── METR-13: Severity Distribution ──
   const severity: SeverityBucket = { mild: 0, moderate: 0, severe: 0 };
   for (const record of slouchingRecords) {
-    const absDelta = Math.abs(record.deltaY!);
-    if (absDelta > 2.5 * thresholdPx) {
+    const magnitude = direction === '>' ? record.deltaY! : -record.deltaY!;
+    if (magnitude > 2.5 * thresholdPx) {
       severity.severe++;
-    } else if (absDelta > 1.5 * thresholdPx) {
+    } else if (magnitude > 1.5 * thresholdPx) {
       severity.moderate++;
     } else {
       severity.mild++;
@@ -431,7 +448,7 @@ export function computeAllMetrics(input: MetricsInput): DashboardMetrics {
     if (sessionRecords.length === 0) continue;
     const sorted = sessionRecords.slice().sort((a, b) => a.time - b.time);
     const firstRecord = sorted[0];
-    const firstSlouch = sorted.find((r) => isSlouching(r, thresholdPx));
+    const firstSlouch = sorted.find((r) => isSlouching(r, thresholdPx, direction));
     if (firstSlouch) {
       timeToFirstSlouchValues.push(firstSlouch.time - firstRecord.time);
     }

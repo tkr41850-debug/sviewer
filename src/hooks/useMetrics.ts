@@ -6,11 +6,14 @@ import type { DashboardMetrics } from '../metrics/types';
 /**
  * Hook that computes all dashboard metrics from the current data state.
  * Returns null if data is not loaded.
- * Accepts thresholdPx from the chart's threshold state.
+ * Accepts thresholdPx and direction from the chart's threshold state.
  *
  * Memoized to prevent recalculation on every render (T-03-04 mitigation).
  */
-export function useMetrics(thresholdPx: number): DashboardMetrics | null {
+export function useMetrics(
+  thresholdPx: number,
+  direction: '>' | '<' = '>'
+): DashboardMetrics | null {
   const state = useDataState();
 
   return useMemo(() => {
@@ -19,6 +22,7 @@ export function useMetrics(thresholdPx: number): DashboardMetrics | null {
       records: state.result.records,
       metadata: state.result.metadata,
       thresholdPx,
+      direction,
     });
-  }, [state, thresholdPx]);
+  }, [state, thresholdPx, direction]);
 }
