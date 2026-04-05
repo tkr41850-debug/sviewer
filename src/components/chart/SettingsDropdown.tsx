@@ -10,12 +10,22 @@ const ENGINE_OPTIONS: { value: ChartEngine; label: string }[] = [
 
 export function SettingsDropdown() {
   const [open, setOpen] = useState(false);
+  const [menuPos, setMenuPos] = useState<{ top: number; right: number }>({ top: 0, right: 0 });
   const { activeEngine } = useChartState();
   const dispatch = useChartDispatch();
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleToggle = useCallback(() => {
-    setOpen((prev) => !prev);
+    setOpen((prev) => {
+      if (!prev && containerRef.current) {
+        const rect = containerRef.current.getBoundingClientRect();
+        setMenuPos({
+          top: rect.bottom + 4,
+          right: window.innerWidth - rect.right,
+        });
+      }
+      return !prev;
+    });
   }, []);
 
   const handleEngineSelect = useCallback(
@@ -68,10 +78,12 @@ export function SettingsDropdown() {
 
       {open && (
         <div
-          className="absolute right-0 top-full z-50 mt-1 min-w-[180px] rounded-lg border shadow-lg max-h-[calc(100vh-80px)] overflow-auto"
+          className="fixed z-50 min-w-[180px] rounded-lg border shadow-lg max-h-[calc(100vh-80px)] overflow-auto"
           style={{
             backgroundColor: 'var(--color-surface)',
             borderColor: 'var(--color-border)',
+            top: menuPos.top,
+            right: Math.max(8, menuPos.right),
           }}
           role="menu"
         >
