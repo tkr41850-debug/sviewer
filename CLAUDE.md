@@ -120,7 +120,17 @@ A React + TypeScript web app that visualizes posture/slouch tracking data from a
 <!-- GSD:conventions-start source:CONVENTIONS.md -->
 ## Conventions
 
-Conventions not yet established. Will populate as patterns emerge during development.
+### Git
+
+- Use **conventional commits** (e.g. `feat:`, `fix:`, `chore:`, `docs:`, `refactor:`, `test:`).
+- Commit after each phase of work — keep commits small and reviewable.
+- Prefer multiple focused commits over one large commit.
+
+### Quality Gates
+
+- `vitest run` must pass before committing.
+- `prettier --check .` must pass before committing.
+- `eslint .` must pass with zero errors before committing.
 <!-- GSD:conventions-end -->
 
 <!-- GSD:architecture-start source:ARCHITECTURE.md -->
