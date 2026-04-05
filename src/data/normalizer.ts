@@ -17,7 +17,7 @@ export function normalizeTimestamp(raw: number | string): number {
     if (!isNaN(parsed)) {
       if (parsed < YEAR_2020_MS || parsed > YEAR_2050_MS) {
         throw new Error(
-          `Unrecognised timestamp format — expected Unix seconds, Unix milliseconds, or ISO 8601`,
+          `Unrecognised timestamp format — expected Unix seconds, Unix milliseconds, or ISO 8601`
         );
       }
       return parsed;
@@ -26,7 +26,7 @@ export function normalizeTimestamp(raw: number | string): number {
     const numeric = Number(raw);
     if (isNaN(numeric)) {
       throw new Error(
-        `Unrecognised timestamp format — expected Unix seconds, Unix milliseconds, or ISO 8601`,
+        `Unrecognised timestamp format — expected Unix seconds, Unix milliseconds, or ISO 8601`
       );
     }
     return normalizeTimestamp(numeric);
@@ -37,7 +37,7 @@ export function normalizeTimestamp(raw: number | string): number {
     const ms = raw * 1000;
     if (ms >= YEAR_2020_MS && ms <= YEAR_2050_MS) return ms;
     throw new Error(
-      `Unrecognised timestamp format — expected Unix seconds, Unix milliseconds, or ISO 8601`,
+      `Unrecognised timestamp format — expected Unix seconds, Unix milliseconds, or ISO 8601`
     );
   }
 
@@ -45,7 +45,7 @@ export function normalizeTimestamp(raw: number | string): number {
   if (raw >= YEAR_2020_MS && raw <= YEAR_2050_MS) return raw;
 
   throw new Error(
-    `Unrecognised timestamp format — expected Unix seconds, Unix milliseconds, or ISO 8601`,
+    `Unrecognised timestamp format — expected Unix seconds, Unix milliseconds, or ISO 8601`
   );
 }
 
@@ -58,17 +58,6 @@ export function computeMidpointY(rect: Rect): number {
 }
 
 /**
- * Computes the median value from an array of numbers.
- * Used for sampling interval calculation.
- */
-function median(values: number[]): number {
-  if (values.length === 0) return 0;
-  const sorted = [...values].sort((a, b) => a - b);
-  const mid = Math.floor(sorted.length / 2);
-  return sorted.length % 2 !== 0 ? sorted[mid] : (sorted[mid - 1] + sorted[mid]) / 2;
-}
-
-/**
  * Marks records as screen-off based on:
  * 1. currentRect === null in the raw entry
  * 2. Timestamp gap > 4x the median sampling interval
@@ -77,7 +66,7 @@ function median(values: number[]): number {
  */
 export function detectScreenOff(
   entries: Pick<RawEntry, 'timestamp' | 'referenceRect' | 'currentRect'>[],
-  medianIntervalMs: number,
+  medianIntervalMs: number
 ): Omit<PostureRecord, 'sessionIndex'>[] {
   const GAP_MULTIPLIER = 4;
 
@@ -113,9 +102,7 @@ export function detectScreenOff(
  * Assigns sessionIndex to each record.
  * A new session starts after any screen-off record (transition from off->on).
  */
-export function segmentSessions(
-  records: Omit<PostureRecord, 'sessionIndex'>[],
-): PostureRecord[] {
+export function segmentSessions(records: Omit<PostureRecord, 'sessionIndex'>[]): PostureRecord[] {
   let sessionIndex = 0;
   let prevWasScreenOff = false;
 

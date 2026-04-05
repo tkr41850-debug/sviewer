@@ -14,6 +14,13 @@ export default tseslint.config(
   },
   prettierConfig,
   {
-    ignores: ['dist/', 'node_modules/'],
+    ignores: ['dist/', 'node_modules/', '.claude/'],
+  },
+  {
+    // Test files may use large numeric literals (e.g. timestamp edge-case constants)
+    files: ['**/*.test.{ts,tsx}', '**/*.spec.{ts,tsx}'],
+    rules: {
+      'no-loss-of-precision': 'off',
+    },
   }
 );
