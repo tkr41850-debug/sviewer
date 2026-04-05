@@ -7,10 +7,11 @@ type DataState =
   | { status: 'loaded'; result: ParseResult }
   | { status: 'error'; error: ParseError };
 
-type DataAction =
+export type DataAction =
   | { type: 'LOADING_START' }
   | { type: 'LOADING_SUCCESS'; payload: ParseResult }
-  | { type: 'LOADING_ERROR'; payload: ParseError };
+  | { type: 'LOADING_ERROR'; payload: ParseError }
+  | { type: 'RESET' };
 
 function dataReducer(state: DataState, action: DataAction): DataState {
   switch (action.type) {
@@ -20,6 +21,8 @@ function dataReducer(state: DataState, action: DataAction): DataState {
       return { status: 'loaded', result: action.payload };
     case 'LOADING_ERROR':
       return { status: 'error', error: action.payload };
+    case 'RESET':
+      return { status: 'idle' };
     default:
       return state;
   }
