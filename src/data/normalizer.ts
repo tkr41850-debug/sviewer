@@ -57,19 +57,20 @@ export function computeMidpointY(rect: Rect): number {
   return rect.y + rect.h / 2;
 }
 
+/** Fixed threshold for screen-off gap detection: 5 seconds. */
+const SCREEN_OFF_GAP_MS = 5000;
+
 /**
  * Marks records as screen-off based on:
  * 1. currentRect === null in the raw entry
- * 2. Timestamp gap > 4x the median sampling interval
+ * 2. Timestamp gap > 5 seconds
  *
  * Returns partial PostureRecord[] (without sessionIndex — assigned by segmentSessions).
  */
 export function detectScreenOff(
   entries: Pick<RawEntry, 'timestamp' | 'referenceRect' | 'currentRect'>[],
-  medianIntervalMs: number
+  _medianIntervalMs?: number
 ): Omit<PostureRecord, 'sessionIndex'>[] {
-  const GAP_MULTIPLIER = 4;
-
   return entries.map((entry, i) => {
     const time = normalizeTimestamp(entry.timestamp);
     const referenceY = computeMidpointY(entry.referenceRect);
@@ -82,7 +83,7 @@ export function detectScreenOff(
     if (!isScreenOff && i > 0) {
       const prevTime = normalizeTimestamp(entries[i - 1].timestamp);
       const gap = time - prevTime;
-      if (gap > medianIntervalMs * GAP_MULTIPLIER) {
+      if (gap > SCREEN_OFF_GAP_MS) {
         isScreenOff = true;
       }
     }

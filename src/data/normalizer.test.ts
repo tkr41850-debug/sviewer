@@ -47,30 +47,39 @@ describe('screen-off detection from null currentRect', () => {
         currentRect: null,
       },
     ];
-    const records = detectScreenOff(entries, 1000);
+    const records = detectScreenOff(entries);
     expect(records[0].isScreenOff).toBe(true);
   });
 
   it('does not mark record as screen-off when currentRect is present', () => {
     const rect = { x: 0, y: 0, w: 100, h: 100 };
     const entries = [{ timestamp: 1700000000000, referenceRect: rect, currentRect: rect }];
-    const records = detectScreenOff(entries, 1000);
+    const records = detectScreenOff(entries);
     expect(records[0].isScreenOff).toBe(false);
   });
 });
 
-describe('screen-off detection from timestamp gap', () => {
-  it('marks record as screen-off when gap > 4x median interval', () => {
-    // Median interval = 1000ms; gap of 5000ms = 5x median = screen off
+describe('screen-off detection from timestamp gap (fixed 5s threshold)', () => {
+  it('marks record as screen-off when gap > 5 seconds', () => {
     const rect = { x: 0, y: 10, w: 100, h: 100 };
     const entries = [
       { timestamp: 1700000000000, referenceRect: rect, currentRect: rect },
       { timestamp: 1700000001000, referenceRect: rect, currentRect: rect },
       { timestamp: 1700000002000, referenceRect: rect, currentRect: rect },
-      { timestamp: 1700000007000, referenceRect: rect, currentRect: rect }, // 5s gap
+      { timestamp: 1700000008000, referenceRect: rect, currentRect: rect }, // 6s gap > 5s
     ];
-    const records = detectScreenOff(entries, 1000);
+    const records = detectScreenOff(entries);
     expect(records[3].isScreenOff).toBe(true);
+  });
+
+  it('does not mark record as screen-off when gap <= 5 seconds', () => {
+    const rect = { x: 0, y: 10, w: 100, h: 100 };
+    const entries = [
+      { timestamp: 1700000000000, referenceRect: rect, currentRect: rect },
+      { timestamp: 1700000005000, referenceRect: rect, currentRect: rect }, // exactly 5s
+    ];
+    const records = detectScreenOff(entries);
+    expect(records[1].isScreenOff).toBe(false);
   });
 
   it('does not mark record as screen-off for normal interval', () => {
@@ -79,7 +88,7 @@ describe('screen-off detection from timestamp gap', () => {
       { timestamp: 1700000000000, referenceRect: rect, currentRect: rect },
       { timestamp: 1700000001000, referenceRect: rect, currentRect: rect },
     ];
-    const records = detectScreenOff(entries, 1000);
+    const records = detectScreenOff(entries);
     expect(records[1].isScreenOff).toBe(false);
   });
 });
