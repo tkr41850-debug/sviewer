@@ -71,6 +71,14 @@ export interface ChartData {
   fullRecords: PostureRecord[];
 }
 
+/** Threshold configuration for slouch detection. */
+export interface ThresholdConfig {
+  /** Threshold value (pixels or percentage based on unit). */
+  value: number;
+  /** Unit of the threshold: 'px' for absolute pixels, '%' for percentage of referenceY. */
+  unit: 'px' | '%';
+}
+
 /** Which chart rendering engine is active. */
 export type ChartEngine = 'recharts' | 'visx';
 
