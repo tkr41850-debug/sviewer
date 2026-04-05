@@ -80,14 +80,15 @@ Plans:
 4. User sees a calendar heatmap showing posture quality distribution across hours or days
 5. All metrics display meaningful values (not NaN/Infinity/0) or an explicit "insufficient data" indicator for edge cases
 6. **Quality gate**: All tests pass (`vitest run`), formatting is clean (`prettier --check .`), and linting is clean (`eslint .`) with zero errors
-   **Plans**: TBD
+   **Plans**: 4 plans
    **UI hint**: yes
 
 Plans:
 
-- [ ] 03-01: TBD
-- [ ] 03-02: TBD
-- [ ] 03-03: TBD
+- [ ] 03-01-PLAN.md — Define metric types and implement TDD metrics engine (all 18 metrics with tests)
+- [ ] 03-02-PLAN.md — Create useMetrics hook, MetricCard, KPICards, MetricGrid, and DashboardShell components
+- [ ] 03-03-PLAN.md — Build SessionTimeline, CalendarHeatmap, and ScoreBreakdown visualization views
+- [ ] 03-04-PLAN.md — Wire Dashboard composition into App.tsx and visual verification checkpoint
 
 ### Phase 4: Dual Chart Engine
 
@@ -137,6 +138,6 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 | ----------------------------- | -------------- | ----------- | --------- |
 | 1. Data Pipeline              | 4/4 | Complete   | 2026-04-05 |
 | 2. Time-Series Graph & Theme  | 0/3            | Planned | -         |
-| 3. Metrics Engine & Dashboard | 0/0            | Not started | -         |
+| 3. Metrics Engine & Dashboard | 0/4            | Planned | -         |
 | 4. Dual Chart Engine          | 0/0            | Not started | -         |
 | 5. Export & Polish            | 0/0            | Not started | -         |
