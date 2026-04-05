@@ -93,7 +93,7 @@ export function ScoreBreakdown({
                   <Cell key={entry.name} fill={colorMap[entry.name]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value: number) => `${Math.round(value)}%`} />
+              <Tooltip formatter={(value) => `${Math.round(Number(value))}%`} />
             </PieChart>
           </ResponsiveContainer>
         </div>
