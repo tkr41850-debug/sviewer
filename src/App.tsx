@@ -1,4 +1,4 @@
-import { useEffect, useCallback } from 'react';
+import { useEffect, useCallback, useState } from 'react';
 import { useDataState, useDataDispatch } from './stores/dataStore';
 import { useFileLoader } from './hooks/useFileLoader';
 import { parseAndProcess } from './data/parser';
@@ -6,6 +6,7 @@ import { DropZone } from './components/input/DropZone';
 import { ProcessingIndicator } from './components/input/ProcessingIndicator';
 import { ErrorMessage } from './components/input/ErrorMessage';
 import { GraphView } from './components/chart/GraphView';
+import { Dashboard } from './components/dashboard/Dashboard';
 import './index.css';
 
 const MAX_URL_DATA_BYTES = 50 * 1024; // 50KB safety limit (PITFALL 6)
@@ -87,11 +88,30 @@ function UploadPage() {
   );
 }
 
+/** Default threshold in pixels — used until GraphView computes the real value. */
+const DEFAULT_THRESHOLD_PX = 20;
+
 export default function App() {
   const state = useDataState();
+  const [thresholdPx, setThresholdPx] = useState(DEFAULT_THRESHOLD_PX);
 
   if (state.status === 'loaded') {
-    return <GraphView records={state.result.records} metadata={state.result.metadata} />;
+    return (
+      <div style={{ background: 'var(--color-bg)' }}>
+        {/* Hero graph — full viewport height (D-01: graph is the hero) */}
+        <GraphView
+          records={state.result.records}
+          metadata={state.result.metadata}
+          onThresholdPxChange={setThresholdPx}
+        />
+        {/* Dashboard — renders below graph, visible immediately on load (D-01, D-03) */}
+        <Dashboard
+          records={state.result.records}
+          metadata={state.result.metadata}
+          thresholdPx={thresholdPx}
+        />
+      </div>
+    );
   }
 
   return <UploadPage />;
