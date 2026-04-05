@@ -71,10 +71,67 @@ export interface ChartData {
   fullRecords: PostureRecord[];
 }
 
-/** Configuration for the slouch threshold line on the chart. */
+/** Threshold configuration for slouch detection. */
 export interface ThresholdConfig {
-  /** Threshold value — interpreted as percentage of referenceY height or absolute px based on `unit`. */
+  /** Threshold value (pixels or percentage based on unit). */
   value: number;
-  /** Unit for threshold interpretation. */
-  unit: '%' | 'px';
+  /** Unit of the threshold: 'px' for absolute pixels, '%' for percentage of referenceY. */
+  unit: 'px' | '%';
+}
+
+/** Which chart rendering engine is active. */
+export type ChartEngine = 'recharts' | 'visx';
+
+/** A user-created text annotation attached to a specific data point on the graph. */
+export interface Annotation {
+  /** Unique identifier (nanoid or crypto.randomUUID). */
+  id: string;
+  /** The annotation text content. */
+  text: string;
+  /** Unix milliseconds — the time coordinate of the annotated data point. */
+  time: number;
+  /** The deltaY value at the annotated data point. */
+  deltaY: number;
+}
+
+/** State for day-over-day comparison mode. */
+export interface ComparisonState {
+  /** Whether comparison mode is currently active. */
+  enabled: boolean;
+  /** ISO date string (YYYY-MM-DD) for the first (primary) day, or null if not selected. */
+  day1: string | null;
+  /** ISO date string (YYYY-MM-DD) for the second (overlay) day, or null if not selected. */
+  day2: string | null;
+}
+
+/**
+ * Props contract that both Recharts and visx chart engine components implement.
+ * The parent component (PostureChart) passes these props; each engine renders accordingly.
+ * Per D-13: common interface enabling engine-agnostic parent logic.
+ */
+export interface ChartAdapterProps {
+  /** LTTB-downsampled PostureRecord[] for the primary data series. */
+  data: PostureRecord[];
+  /** Slouch threshold in absolute pixels (already converted from % if needed). */
+  thresholdPx: number;
+  /** Visible time domain [startTime, endTime] in Unix ms. undefined = full range. */
+  visibleDomain?: [number, number];
+  /** Callback when the user brush-selects a time range. null = reset to full range. */
+  onBrushChange?: (domain: [number, number] | null) => void;
+  /** Current annotations to render on the chart. */
+  annotations: Annotation[];
+  /** Callback when user clicks a data point to create a new annotation. Receives time and deltaY of the clicked point. */
+  onAnnotationCreate?: (time: number, deltaY: number) => void;
+  /** Callback when user edits an existing annotation's text. */
+  onAnnotationUpdate?: (id: string, text: string) => void;
+  /** Callback when user deletes an annotation. */
+  onAnnotationDelete?: (id: string) => void;
+  /** Optional second-day data series for day-over-day comparison (per D-04/D-05/D-06). */
+  comparisonData?: PostureRecord[];
+  /** Label for the comparison series (e.g., "Apr 03"). */
+  comparisonLabel?: string;
+  /** Label for the primary series (e.g., "Apr 04"). */
+  primaryLabel?: string;
+  /** When true, X-axis shows time-of-day (00:00-23:59) instead of absolute timestamps. Per D-06. */
+  normalizeTimeAxis?: boolean;
 }

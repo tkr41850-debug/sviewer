@@ -114,6 +114,7 @@ export function GraphView({ records, metadata, onThresholdPxChange }: GraphViewP
           data={downsampledPoints}
           thresholdPx={thresholdPx}
           visibleDomain={visibleDomain ?? undefined}
+          annotations={[]}
         />
       </div>
 

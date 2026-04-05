@@ -86,10 +86,10 @@ Plans:
 
 Plans:
 
-- [ ] 03-01-PLAN.md — Define metric types and implement TDD metrics engine (all 18 metrics with tests)
-- [ ] 03-02-PLAN.md — Create useMetrics hook, MetricCard, KPICards, MetricGrid, and DashboardShell components
-- [ ] 03-03-PLAN.md — Build SessionTimeline, CalendarHeatmap, and ScoreBreakdown visualization views
-- [ ] 03-04-PLAN.md — Wire Dashboard composition into App.tsx and visual verification checkpoint
+- [x] 03-01-PLAN.md — Define metric types and implement TDD metrics engine (all 18 metrics with tests)
+- [x] 03-02-PLAN.md — Create useMetrics hook, MetricCard, KPICards, MetricGrid, and DashboardShell components
+- [x] 03-03-PLAN.md — Build SessionTimeline, CalendarHeatmap, and ScoreBreakdown visualization views
+- [x] 03-04-PLAN.md — Wire Dashboard composition into App.tsx and visual verification checkpoint
 
 ### Phase 4: Dual Chart Engine
 
@@ -108,9 +108,9 @@ Plans:
 
 Plans:
 
-- [ ] 04-01-PLAN.md — Define ChartAdapterProps interface, install visx, create ChartStore, build SettingsDropdown and EngineLabel
-- [ ] 04-02-PLAN.md — Refactor Recharts into RechartsAdapter, build VisxAdapter with full feature parity, wire engine switching
-- [ ] 04-03-PLAN.md — Implement day-over-day comparison and clickable graph annotations in both engines
+- [x] 04-01-PLAN.md — Define ChartAdapterProps interface, install visx, create ChartStore, build SettingsDropdown and EngineLabel
+- [x] 04-02-PLAN.md — Refactor Recharts into RechartsAdapter, build VisxAdapter with full feature parity, wire engine switching
+- [x] 04-03-PLAN.md — Implement day-over-day comparison and clickable graph annotations in both engines
 
 ### Phase 5: Export & Polish
 
