@@ -70,11 +70,3 @@ export interface ChartData {
   /** Original full-resolution records — never rendered directly, used for metric calculations. */
   fullRecords: PostureRecord[];
 }
-
-/** Configuration for the slouch threshold line on the chart. */
-export interface ThresholdConfig {
-  /** Threshold value — interpreted as percentage of referenceY height or absolute px based on `unit`. */
-  value: number;
-  /** Unit for threshold interpretation. */
-  unit: '%' | 'px';
-}
