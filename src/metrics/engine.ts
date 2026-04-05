@@ -4,6 +4,7 @@
 // All downstream dashboard views consume the output of computeAllMetrics.
 
 import type { PostureRecord, ParseResult } from '../data/types';
+import { SCREEN_OFF_GAP_MS } from '../data/normalizer';
 import type {
   DashboardMetrics,
   MetricQuality,
@@ -63,8 +64,10 @@ function computeStreaks(
   let startTime = active[0].time;
 
   for (let i = 1; i < active.length; i++) {
+    const gap = active[i].time - active[i - 1].time;
     const type = isSlouching(active[i], thresholdPx, direction) ? 'slouch' : 'good';
-    if (type !== currentType) {
+    // Break streak at type change OR when gap exceeds screen-off threshold
+    if (type !== currentType || gap > SCREEN_OFF_GAP_MS) {
       streaks.push({ startTime, endTime: active[i - 1].time, type: currentType });
       currentType = type;
       startTime = active[i].time;
@@ -134,14 +137,14 @@ function countScreenOffGaps(records: PostureRecord[]): number {
   return count;
 }
 
-/** Compute total screen time: sum of intervals between consecutive active records. */
+/** Compute total screen time: sum of intervals between consecutive active records, capped at 5s each. */
 function computeTotalScreenTime(records: PostureRecord[]): number {
   const active = computeActiveRecords(records);
   if (active.length < 2) return 0;
 
   let total = 0;
   for (let i = 1; i < active.length; i++) {
-    total += active[i].time - active[i - 1].time;
+    total += Math.min(active[i].time - active[i - 1].time, SCREEN_OFF_GAP_MS);
   }
   return total;
 }

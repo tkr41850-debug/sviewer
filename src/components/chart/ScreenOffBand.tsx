@@ -7,8 +7,8 @@ export interface ScreenOffRegion {
 
 /**
  * Scans records and returns contiguous screen-off regions.
- * Each region spans from the first screen-off record's time to the last
- * consecutive screen-off record's time in that run.
+ * Each region spans from the first screen-off record's time to the next
+ * active record's time (the point the user returns).
  */
 export function computeScreenOffRegions(records: PostureRecord[]): ScreenOffRegion[] {
   const regions: ScreenOffRegion[] = [];
@@ -27,7 +27,7 @@ export function computeScreenOffRegions(records: PostureRecord[]): ScreenOffRegi
       if (inRegion) {
         regions.push({
           startTime: regionStart,
-          endTime: records[i - 1].time,
+          endTime: record.time,
         });
         inRegion = false;
       }

@@ -58,7 +58,7 @@ function processEntries(rawEntries: RawEntry[]): ParseResult {
   }
   const samplingIntervalMs = computeMedian(intervals);
 
-  const partialRecords = detectScreenOff(rawEntries, samplingIntervalMs);
+  const partialRecords = detectScreenOff(rawEntries);
   const fullRecords: PostureRecord[] = segmentSessions(partialRecords);
 
   const activeSessions = new Set(

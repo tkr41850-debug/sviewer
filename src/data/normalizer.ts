@@ -58,45 +58,59 @@ export function computeMidpointY(rect: Rect): number {
 }
 
 /** Fixed threshold for screen-off gap detection: 5 seconds. */
-const SCREEN_OFF_GAP_MS = 5000;
+export const SCREEN_OFF_GAP_MS = 5000;
 
 /**
  * Marks records as screen-off based on:
  * 1. currentRect === null in the raw entry
- * 2. Timestamp gap > 5 seconds
+ * 2. Timestamp gap > 5 seconds — inserts a synthetic screen-off record at prevTime + 5s
+ *    while keeping the next real record active (it represents the user returning).
  *
+ * May return MORE records than input entries (synthetic records inserted at gap boundaries).
  * Returns partial PostureRecord[] (without sessionIndex — assigned by segmentSessions).
  */
 export function detectScreenOff(
-  entries: Pick<RawEntry, 'timestamp' | 'referenceRect' | 'currentRect'>[],
-  _medianIntervalMs?: number
+  entries: Pick<RawEntry, 'timestamp' | 'referenceRect' | 'currentRect'>[]
 ): Omit<PostureRecord, 'sessionIndex'>[] {
-  return entries.map((entry, i) => {
+  const result: Omit<PostureRecord, 'sessionIndex'>[] = [];
+
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i];
     const time = normalizeTimestamp(entry.timestamp);
     const referenceY = computeMidpointY(entry.referenceRect);
     const hasCurrentRect = entry.currentRect !== null;
     const currentY = hasCurrentRect ? computeMidpointY(entry.currentRect!) : null;
     const deltaY = currentY !== null ? currentY - referenceY : null;
 
-    let isScreenOff = !hasCurrentRect;
-
-    if (!isScreenOff && i > 0) {
+    // Check for timestamp gap — insert synthetic screen-off record at boundary
+    if (hasCurrentRect && i > 0) {
       const prevTime = normalizeTimestamp(entries[i - 1].timestamp);
       const gap = time - prevTime;
       if (gap > SCREEN_OFF_GAP_MS) {
-        isScreenOff = true;
+        // Insert synthetic screen-off record 5s after the previous record
+        result.push({
+          time: prevTime + SCREEN_OFF_GAP_MS,
+          referenceY,
+          currentY: null,
+          deltaY: null,
+          isSlouching: false,
+          isScreenOff: true,
+        });
+        // The real record at `time` stays active (user returned)
       }
     }
 
-    return {
+    result.push({
       time,
       referenceY,
       currentY,
       deltaY,
-      isSlouching: false, // Charts apply threshold; parser always sets false
-      isScreenOff,
-    };
-  });
+      isSlouching: false,
+      isScreenOff: !hasCurrentRect,
+    });
+  }
+
+  return result;
 }
 
 /**

@@ -49,41 +49,41 @@ function makeInput(records: PostureRecord[], thresholdPx = 20): MetricsInput {
 }
 
 // ─── Normal Scenario Fixture ─────────────────────────────────────
-// ~20 records over 2 hours, 2 sessions, varying deltaY, one screen-off gap.
-// Threshold = 20px. Records at 1-minute intervals starting at 1700000000000.
-// Session 0: records 0-8 (minutes 0-8), mix of good posture and slouching
-// Screen off: records 9-10 (minutes 9-10)
-// Session 1: records 11-19 (minutes 11-19), more slouching
+// ~20 records, 2 sessions, varying deltaY, one screen-off gap.
+// Threshold = 20px. Records at 1-second intervals starting at 1700000000000.
+// Session 0: records 0-8 (seconds 0-8), mix of good posture and slouching
+// Screen off: records 9-10 (seconds 9-10)
+// Session 1: records 11-19 (seconds 11-19), more slouching
 
 const BASE_TIME = 1700000000000;
-const MINUTE = 60000;
+const SECOND = 1000;
 
 const normalRecords = makeRecords([
   // Session 0: good posture and some slouching
-  { time: BASE_TIME + 0 * MINUTE, deltaY: 5, sessionIndex: 0 }, // good
-  { time: BASE_TIME + 1 * MINUTE, deltaY: 8, sessionIndex: 0 }, // good
-  { time: BASE_TIME + 2 * MINUTE, deltaY: 25, sessionIndex: 0 }, // slouching (>20)
-  { time: BASE_TIME + 3 * MINUTE, deltaY: 30, sessionIndex: 0 }, // slouching
-  { time: BASE_TIME + 4 * MINUTE, deltaY: 10, sessionIndex: 0 }, // good (corrected)
-  { time: BASE_TIME + 5 * MINUTE, deltaY: 3, sessionIndex: 0 }, // good
-  { time: BASE_TIME + 6 * MINUTE, deltaY: 35, sessionIndex: 0 }, // slouching
-  { time: BASE_TIME + 7 * MINUTE, deltaY: 45, sessionIndex: 0 }, // slouching (severe)
-  { time: BASE_TIME + 8 * MINUTE, deltaY: 12, sessionIndex: 0 }, // good (corrected)
+  { time: BASE_TIME + 0 * SECOND, deltaY: 5, sessionIndex: 0 }, // good
+  { time: BASE_TIME + 1 * SECOND, deltaY: 8, sessionIndex: 0 }, // good
+  { time: BASE_TIME + 2 * SECOND, deltaY: 25, sessionIndex: 0 }, // slouching (>20)
+  { time: BASE_TIME + 3 * SECOND, deltaY: 30, sessionIndex: 0 }, // slouching
+  { time: BASE_TIME + 4 * SECOND, deltaY: 10, sessionIndex: 0 }, // good (corrected)
+  { time: BASE_TIME + 5 * SECOND, deltaY: 3, sessionIndex: 0 }, // good
+  { time: BASE_TIME + 6 * SECOND, deltaY: 35, sessionIndex: 0 }, // slouching
+  { time: BASE_TIME + 7 * SECOND, deltaY: 45, sessionIndex: 0 }, // slouching (severe)
+  { time: BASE_TIME + 8 * SECOND, deltaY: 12, sessionIndex: 0 }, // good (corrected)
 
   // Screen off gap
-  { time: BASE_TIME + 9 * MINUTE, deltaY: null, isScreenOff: true, sessionIndex: 0 },
-  { time: BASE_TIME + 10 * MINUTE, deltaY: null, isScreenOff: true, sessionIndex: 0 },
+  { time: BASE_TIME + 9 * SECOND, deltaY: null, isScreenOff: true, sessionIndex: 0 },
+  { time: BASE_TIME + 10 * SECOND, deltaY: null, isScreenOff: true, sessionIndex: 0 },
 
   // Session 1: more slouching
-  { time: BASE_TIME + 11 * MINUTE, deltaY: 7, sessionIndex: 1 }, // good
-  { time: BASE_TIME + 12 * MINUTE, deltaY: 22, sessionIndex: 1 }, // slouching
-  { time: BASE_TIME + 13 * MINUTE, deltaY: 28, sessionIndex: 1 }, // slouching
-  { time: BASE_TIME + 14 * MINUTE, deltaY: 55, sessionIndex: 1 }, // slouching (severe)
-  { time: BASE_TIME + 15 * MINUTE, deltaY: 15, sessionIndex: 1 }, // good (corrected)
-  { time: BASE_TIME + 16 * MINUTE, deltaY: 4, sessionIndex: 1 }, // good
-  { time: BASE_TIME + 17 * MINUTE, deltaY: 6, sessionIndex: 1 }, // good
-  { time: BASE_TIME + 18 * MINUTE, deltaY: -5, sessionIndex: 1 }, // good (negative deltaY)
-  { time: BASE_TIME + 19 * MINUTE, deltaY: 21, sessionIndex: 1 }, // slouching
+  { time: BASE_TIME + 11 * SECOND, deltaY: 7, sessionIndex: 1 }, // good
+  { time: BASE_TIME + 12 * SECOND, deltaY: 22, sessionIndex: 1 }, // slouching
+  { time: BASE_TIME + 13 * SECOND, deltaY: 28, sessionIndex: 1 }, // slouching
+  { time: BASE_TIME + 14 * SECOND, deltaY: 55, sessionIndex: 1 }, // slouching (severe)
+  { time: BASE_TIME + 15 * SECOND, deltaY: 15, sessionIndex: 1 }, // good (corrected)
+  { time: BASE_TIME + 16 * SECOND, deltaY: 4, sessionIndex: 1 }, // good
+  { time: BASE_TIME + 17 * SECOND, deltaY: 6, sessionIndex: 1 }, // good
+  { time: BASE_TIME + 18 * SECOND, deltaY: -5, sessionIndex: 1 }, // good (negative deltaY)
+  { time: BASE_TIME + 19 * SECOND, deltaY: 21, sessionIndex: 1 }, // slouching
 ]);
 
 const normalInput = makeInput(normalRecords, 20);
@@ -94,21 +94,21 @@ const singleRecord = makeRecords([{ time: BASE_TIME, deltaY: 15, sessionIndex: 0
 
 const allScreenOff = makeRecords([
   { time: BASE_TIME, deltaY: null, isScreenOff: true, sessionIndex: 0 },
-  { time: BASE_TIME + MINUTE, deltaY: null, isScreenOff: true, sessionIndex: 0 },
-  { time: BASE_TIME + 2 * MINUTE, deltaY: null, isScreenOff: true, sessionIndex: 0 },
+  { time: BASE_TIME + SECOND, deltaY: null, isScreenOff: true, sessionIndex: 0 },
+  { time: BASE_TIME + 2 * SECOND, deltaY: null, isScreenOff: true, sessionIndex: 0 },
 ]);
 
 const noSlouching = makeRecords([
   { time: BASE_TIME, deltaY: 5, sessionIndex: 0 },
-  { time: BASE_TIME + MINUTE, deltaY: 3, sessionIndex: 0 },
-  { time: BASE_TIME + 2 * MINUTE, deltaY: -2, sessionIndex: 0 },
-  { time: BASE_TIME + 3 * MINUTE, deltaY: 10, sessionIndex: 0 },
-  { time: BASE_TIME + 4 * MINUTE, deltaY: 8, sessionIndex: 0 },
-  { time: BASE_TIME + 5 * MINUTE, deltaY: 1, sessionIndex: 0 },
-  { time: BASE_TIME + 6 * MINUTE, deltaY: 12, sessionIndex: 0 },
-  { time: BASE_TIME + 7 * MINUTE, deltaY: 7, sessionIndex: 0 },
-  { time: BASE_TIME + 8 * MINUTE, deltaY: -3, sessionIndex: 0 },
-  { time: BASE_TIME + 9 * MINUTE, deltaY: 6, sessionIndex: 0 },
+  { time: BASE_TIME + SECOND, deltaY: 3, sessionIndex: 0 },
+  { time: BASE_TIME + 2 * SECOND, deltaY: -2, sessionIndex: 0 },
+  { time: BASE_TIME + 3 * SECOND, deltaY: 10, sessionIndex: 0 },
+  { time: BASE_TIME + 4 * SECOND, deltaY: 8, sessionIndex: 0 },
+  { time: BASE_TIME + 5 * SECOND, deltaY: 1, sessionIndex: 0 },
+  { time: BASE_TIME + 6 * SECOND, deltaY: 12, sessionIndex: 0 },
+  { time: BASE_TIME + 7 * SECOND, deltaY: 7, sessionIndex: 0 },
+  { time: BASE_TIME + 8 * SECOND, deltaY: -3, sessionIndex: 0 },
+  { time: BASE_TIME + 9 * SECOND, deltaY: 6, sessionIndex: 0 },
 ]);
 
 // ─── Tests ───────────────────────────────────────────────────────
@@ -156,24 +156,24 @@ describe('computeAllMetrics - core metrics', () => {
   it('METR-03: avgTimeToCorrect is in milliseconds', () => {
     const result = computeAllMetrics(normalInput);
     // Slouch streaks in session 0:
-    //   records 2-3 (2min slouch), corrected at record 4 -> duration = 2 * MINUTE
-    //   records 6-7 (2min slouch), corrected at record 8 -> duration = 2 * MINUTE
+    //   records 2-3 (2min slouch), corrected at record 4 -> duration = 2 * SECOND
+    //   records 6-7 (2min slouch), corrected at record 8 -> duration = 2 * SECOND
     // Slouch streaks in session 1:
-    //   records 12-14 (3min slouch), corrected at record 15 -> duration = 3 * MINUTE
+    //   records 12-14 (3min slouch), corrected at record 15 -> duration = 3 * SECOND
     //   record 19 (1min), no correction (end of data) -> duration = 0 (single record at end)
     // avgTimeToCorrect should be a positive ms value
     expect(result.avgTimeToCorrect.value).toBeGreaterThan(0);
     expect(result.avgTimeToCorrect.quality).toBe('reliable');
   });
 
-  it('METR-04: totalScreenTime equals sum of intervals between non-screen-off records', () => {
+  it('METR-04: totalScreenTime equals sum of intervals between active records, capped at 5s each', () => {
     const result = computeAllMetrics(normalInput);
     // Active records: 0-8 (session 0) + 11-19 (session 1) = 18 records, 17 intervals
-    // Session 0: 8 intervals of 1 minute = 8 * MINUTE
-    // Gap: record 8 -> record 11 = 3 * MINUTE (active-to-active, screen-off filtered out)
-    // Session 1: 8 intervals of 1 minute = 8 * MINUTE
-    // Total = (8 + 3 + 8) * MINUTE = 19 * MINUTE = 1140000ms
-    expect(result.totalScreenTime.value).toBe(19 * MINUTE);
+    // Session 0: 8 intervals of 1s = 8 * SECOND
+    // Gap: record 8 -> record 11 = 3 * SECOND (active-to-active, under 5s cap)
+    // Session 1: 8 intervals of 1s = 8 * SECOND
+    // Total = (8 + 3 + 8) * SECOND = 19 * SECOND = 19000ms
+    expect(result.totalScreenTime.value).toBe(19 * SECOND);
     expect(result.totalScreenTime.quality).toBe('reliable');
   });
 
@@ -185,7 +185,7 @@ describe('computeAllMetrics - core metrics', () => {
 
   it('METR-06: longestSlouchStreak is duration of longest continuous slouch', () => {
     const result = computeAllMetrics(normalInput);
-    // Longest slouch streak: records 12-14 in session 1 (3 consecutive), duration = 2 * MINUTE
+    // Longest slouch streak: records 12-14 in session 1 (3 consecutive), duration = 2 * SECOND
     // (duration is from first to last record time in streak)
     expect(result.longestSlouchStreak.value).toBeGreaterThan(0);
     expect(result.longestSlouchStreak.quality).toBe('reliable');
@@ -193,7 +193,7 @@ describe('computeAllMetrics - core metrics', () => {
 
   it('METR-07: longestGoodStreak is duration of longest continuous good posture', () => {
     const result = computeAllMetrics(normalInput);
-    // Longest good streak in session 1: records 15-18 = 3 * MINUTE
+    // Longest good streak in session 1: records 15-18 = 3 * SECOND
     expect(result.longestGoodStreak.value).toBeGreaterThan(0);
     expect(result.longestGoodStreak.quality).toBe('reliable');
   });
@@ -244,10 +244,10 @@ describe('computeAllMetrics - advanced metrics', () => {
 
   it('METR-14: avgTimeToFirstSlouch is average ms from session start to first slouch', () => {
     const result = computeAllMetrics(normalInput);
-    // Session 0: first active record at minute 0, first slouch at minute 2 -> 2 * MINUTE
-    // Session 1: first active record at minute 11, first slouch at minute 12 -> 1 * MINUTE
-    // Average = (2 * MINUTE + 1 * MINUTE) / 2 = 1.5 * MINUTE
-    expect(result.avgTimeToFirstSlouch.value).toBeCloseTo(1.5 * MINUTE, 0);
+    // Session 0: first active record at minute 0, first slouch at minute 2 -> 2 * SECOND
+    // Session 1: first active record at minute 11, first slouch at minute 12 -> 1 * SECOND
+    // Average = (2 * SECOND + 1 * SECOND) / 2 = 1.5 * SECOND
+    expect(result.avgTimeToFirstSlouch.value).toBeCloseTo(1.5 * SECOND, 0);
     expect(result.avgTimeToFirstSlouch.quality).toBe('limited');
   });
 
@@ -261,8 +261,8 @@ describe('computeAllMetrics - advanced metrics', () => {
     const result = computeAllMetrics(normalInput);
     // Slouch streaks: records 2-3 (2min), 6-7 (2min), 12-14 (3min), 19 (end, single)
     // Each streak's duration = (last.time - first.time)
-    // 2-3: 1 * MINUTE, 6-7: 1 * MINUTE, 12-14: 2 * MINUTE, 19: 0
-    // Total = 4 * MINUTE
+    // 2-3: 1 * SECOND, 6-7: 1 * SECOND, 12-14: 2 * SECOND, 19: 0
+    // Total = 4 * SECOND
     expect(result.cumulativeSlouchTime.value).toBeGreaterThan(0);
   });
 
@@ -305,10 +305,10 @@ describe('computeAllMetrics - edge cases', () => {
       records: allScreenOff,
       metadata: {
         startTime: BASE_TIME,
-        endTime: BASE_TIME + 2 * MINUTE,
+        endTime: BASE_TIME + 2 * SECOND,
         totalEntries: 3,
         sessionCount: 0,
-        samplingIntervalMs: MINUTE,
+        samplingIntervalMs: SECOND,
       },
       thresholdPx: 20,
     };

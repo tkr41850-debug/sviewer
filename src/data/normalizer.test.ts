@@ -60,35 +60,45 @@ describe('screen-off detection from null currentRect', () => {
 });
 
 describe('screen-off detection from timestamp gap (fixed 5s threshold)', () => {
-  it('marks record as screen-off when gap > 5 seconds', () => {
+  it('inserts synthetic screen-off record at +5s when gap > 5 seconds', () => {
     const rect = { x: 0, y: 10, w: 100, h: 100 };
     const entries = [
       { timestamp: 1700000000000, referenceRect: rect, currentRect: rect },
       { timestamp: 1700000001000, referenceRect: rect, currentRect: rect },
       { timestamp: 1700000002000, referenceRect: rect, currentRect: rect },
-      { timestamp: 1700000008000, referenceRect: rect, currentRect: rect }, // 6s gap > 5s
+      { timestamp: 1700000008000, referenceRect: rect, currentRect: rect }, // 6s gap
     ];
     const records = detectScreenOff(entries);
+    // 4 input entries + 1 synthetic = 5 records
+    expect(records).toHaveLength(5);
+    // Synthetic record at 2000 + 5000 = 7000
+    expect(records[3].time).toBe(1700000007000);
     expect(records[3].isScreenOff).toBe(true);
+    expect(records[3].deltaY).toBeNull();
+    // Real record at 8000 stays active
+    expect(records[4].time).toBe(1700000008000);
+    expect(records[4].isScreenOff).toBe(false);
   });
 
-  it('does not mark record as screen-off when gap <= 5 seconds', () => {
+  it('does not insert synthetic record when gap <= 5 seconds', () => {
     const rect = { x: 0, y: 10, w: 100, h: 100 };
     const entries = [
       { timestamp: 1700000000000, referenceRect: rect, currentRect: rect },
       { timestamp: 1700000005000, referenceRect: rect, currentRect: rect }, // exactly 5s
     ];
     const records = detectScreenOff(entries);
+    expect(records).toHaveLength(2);
     expect(records[1].isScreenOff).toBe(false);
   });
 
-  it('does not mark record as screen-off for normal interval', () => {
+  it('does not insert synthetic record for normal interval', () => {
     const rect = { x: 0, y: 10, w: 100, h: 100 };
     const entries = [
       { timestamp: 1700000000000, referenceRect: rect, currentRect: rect },
       { timestamp: 1700000001000, referenceRect: rect, currentRect: rect },
     ];
     const records = detectScreenOff(entries);
+    expect(records).toHaveLength(2);
     expect(records[1].isScreenOff).toBe(false);
   });
 });
