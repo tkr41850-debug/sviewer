@@ -1,0 +1,181 @@
+# Requirements: SViewer
+
+**Defined:** 2026-04-05
+**Core Value:** Turn raw slouch-tracking JSON into an instantly understandable visual picture of posture habits
+
+## v1 Requirements
+
+Requirements for initial release. Each maps to roadmap phases.
+
+### Data Loading
+
+- [ ] **LOAD-01**: User can load JSON data via drag-and-drop onto the page
+- [ ] **LOAD-02**: User can load JSON data via file picker dialog
+- [ ] **LOAD-03**: User can load JSON data via inline URL parameter (`?data=[...]`)
+- [ ] **LOAD-04**: App auto-detects timestamp format (Unix seconds, Unix milliseconds, ISO strings)
+- [ ] **LOAD-05**: App validates JSON structure and shows specific error messages for malformed data
+- [ ] **LOAD-06**: App handles large files without freezing the UI (Web Worker for parsing)
+
+### Data Processing
+
+- [ ] **PROC-01**: App computes slouch state by comparing current rect midpoint Y to reference rect midpoint Y
+- [ ] **PROC-02**: App detects screen-off periods from null currentRect entries
+- [ ] **PROC-03**: App detects screen-off periods from timestamp gaps
+- [ ] **PROC-04**: App segments data into sessions based on screen-off gaps
+- [ ] **PROC-05**: App normalizes all timestamps to Date objects regardless of input format
+- [ ] **PROC-06**: App applies LTTB downsampling for large datasets before charting
+
+### Time-Series Graph
+
+- [ ] **GRPH-01**: App renders time-series line graph with X=time, Y=delta Y-position
+- [ ] **GRPH-02**: Graph displays configurable slouch threshold as a dashed line
+- [ ] **GRPH-03**: Slouch threshold is configurable as percentage of reference height OR absolute pixel value
+- [ ] **GRPH-04**: Graph shows tooltips on hover with timestamp, delta value, and posture state
+- [ ] **GRPH-05**: Graph visualizes screen-off periods as shaded/hatched regions (not connected lines)
+- [ ] **GRPH-06**: User can brush-to-zoom with an overview minimap below the main chart
+- [ ] **GRPH-07**: User can toggle between Recharts and visx/D3 charting engines
+- [ ] **GRPH-08**: Both chart engines render identical data with consistent interactions
+- [ ] **GRPH-09**: Smooth animated transitions when switching time ranges or chart engines
+- [ ] **GRPH-10**: User can overlay two days on the same graph for day-over-day comparison
+- [ ] **GRPH-11**: User can click on graph points to add text annotations
+
+### Dashboard Metrics
+
+- [ ] **METR-01**: Posture score (0-100 composite score)
+- [ ] **METR-02**: Slouch rate (percentage of active time spent slouching)
+- [ ] **METR-03**: Average time-to-correct posture after slouch onset
+- [ ] **METR-04**: Total screen time (active tracking time excluding screen-off)
+- [ ] **METR-05**: Session count (number of distinct tracking sessions)
+- [ ] **METR-06**: Longest slouch streak (duration of longest continuous slouch)
+- [ ] **METR-07**: Longest slouch-free streak (duration of longest good-posture run)
+- [ ] **METR-08**: Break frequency (average time between screen-off periods)
+- [ ] **METR-09**: Worst hour (hour of day with highest slouch rate)
+- [ ] **METR-10**: Best hour (hour of day with lowest slouch rate)
+- [ ] **METR-11**: Daily posture trend (improving/declining over the dataset)
+- [ ] **METR-12**: Posture improvement rate (slope of posture score over time)
+- [ ] **METR-13**: Slouch severity distribution (mild/moderate/severe buckets)
+- [ ] **METR-14**: Time-to-first-slouch per session (average)
+- [ ] **METR-15**: Posture volatility (standard deviation of delta Y)
+- [ ] **METR-16**: Cumulative slouch time (total minutes/hours spent slouching)
+- [ ] **METR-17**: Recovery speed trend (whether time-to-correct is improving over sessions)
+- [ ] **METR-18**: Slouch-by-hour distribution (slouch rate per hour of day)
+
+### Dashboard Views
+
+- [ ] **VIEW-01**: Top KPI cards displaying headline metrics (posture score, slouch rate, screen time, session count)
+- [ ] **VIEW-02**: Secondary metric grid displaying all remaining metrics
+- [ ] **VIEW-03**: Session timeline as horizontal segmented bar (green=good, red=slouch, gray=away)
+- [ ] **VIEW-04**: Calendar heatmap showing posture quality per hour or per day
+- [ ] **VIEW-05**: Posture score breakdown (donut/bar chart of score components)
+
+### Export & Sharing
+
+- [ ] **EXPT-01**: User can export time-series data and metrics as CSV
+- [ ] **EXPT-02**: User can export dashboard screenshot as PNG
+- [ ] **EXPT-03**: URL encodes current view state (time range, threshold, chart engine) for sharing
+
+### Theme & Layout
+
+- [ ] **THME-01**: App follows system dark/light preference automatically
+- [ ] **THME-02**: Both chart engines use theme-aware colors
+- [ ] **THME-03**: Responsive layout that reflows on different screen sizes
+- [ ] **THME-04**: Keyboard shortcuts for navigation (arrows to pan, +/- zoom, r reset, t toggle theme, ? help)
+
+## v2 Requirements
+
+Deferred to future release. Tracked but not in current roadmap.
+
+### Persistence & History
+
+- **HIST-01**: localStorage persistence for recent files and settings
+- **HIST-02**: Comparison across multiple loaded files
+
+### Advanced Analytics
+
+- **ADVN-01**: Correlation analysis between slouch patterns and time-of-day
+- **ADVN-02**: Predictive slouch alerts based on historical patterns
+
+## Out of Scope
+
+Explicitly excluded. Documented to prevent scope creep.
+
+| Feature | Reason |
+|---------|--------|
+| Real-time streaming data | App processes completed JSON files, not live feeds |
+| User accounts / authentication | Fully client-side, stateless by design |
+| Backend / API / database | Everything runs in the browser |
+| AI posture recommendations | Not a health advice tool — pure data visualization |
+| Population comparison | No backend for aggregate data; self-comparison is more actionable |
+| Push notifications | Data viewer, not a posture trainer |
+| Multi-user comparison | Privacy concerns; reference rects differ per person |
+| Gamification (badges/leaderboards) | Adds persistence complexity; metrics scratch this itch |
+| Native mobile app | Responsive web covers mobile viewing |
+
+## Traceability
+
+Which phases cover which requirements. Updated during roadmap creation.
+
+| Requirement | Phase | Status |
+|-------------|-------|--------|
+| LOAD-01 | — | Pending |
+| LOAD-02 | — | Pending |
+| LOAD-03 | — | Pending |
+| LOAD-04 | — | Pending |
+| LOAD-05 | — | Pending |
+| LOAD-06 | — | Pending |
+| PROC-01 | — | Pending |
+| PROC-02 | — | Pending |
+| PROC-03 | — | Pending |
+| PROC-04 | — | Pending |
+| PROC-05 | — | Pending |
+| PROC-06 | — | Pending |
+| GRPH-01 | — | Pending |
+| GRPH-02 | — | Pending |
+| GRPH-03 | — | Pending |
+| GRPH-04 | — | Pending |
+| GRPH-05 | — | Pending |
+| GRPH-06 | — | Pending |
+| GRPH-07 | — | Pending |
+| GRPH-08 | — | Pending |
+| GRPH-09 | — | Pending |
+| GRPH-10 | — | Pending |
+| GRPH-11 | — | Pending |
+| METR-01 | — | Pending |
+| METR-02 | — | Pending |
+| METR-03 | — | Pending |
+| METR-04 | — | Pending |
+| METR-05 | — | Pending |
+| METR-06 | — | Pending |
+| METR-07 | — | Pending |
+| METR-08 | — | Pending |
+| METR-09 | — | Pending |
+| METR-10 | — | Pending |
+| METR-11 | — | Pending |
+| METR-12 | — | Pending |
+| METR-13 | — | Pending |
+| METR-14 | — | Pending |
+| METR-15 | — | Pending |
+| METR-16 | — | Pending |
+| METR-17 | — | Pending |
+| METR-18 | — | Pending |
+| VIEW-01 | — | Pending |
+| VIEW-02 | — | Pending |
+| VIEW-03 | — | Pending |
+| VIEW-04 | — | Pending |
+| VIEW-05 | — | Pending |
+| EXPT-01 | — | Pending |
+| EXPT-02 | — | Pending |
+| EXPT-03 | — | Pending |
+| THME-01 | — | Pending |
+| THME-02 | — | Pending |
+| THME-03 | — | Pending |
+| THME-04 | — | Pending |
+
+**Coverage:**
+- v1 requirements: 52 total
+- Mapped to phases: 0
+- Unmapped: 52
+
+---
+*Requirements defined: 2026-04-05*
+*Last updated: 2026-04-05 after initial definition*
