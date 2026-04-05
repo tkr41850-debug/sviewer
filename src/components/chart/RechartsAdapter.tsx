@@ -1,0 +1,296 @@
+import { useMemo, useCallback } from 'react';
+import { format } from 'date-fns';
+import {
+  ComposedChart,
+  Line,
+  Area,
+  ReferenceLine,
+  ReferenceArea,
+  ReferenceDot,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  ResponsiveContainer,
+} from 'recharts';
+import { useChartColors } from '../../hooks/useCSSVar';
+import { computeScreenOffRegions } from './ScreenOffBand';
+import { ChartTooltip } from './ChartTooltip';
+import type { ChartAdapterProps, PostureRecord } from '../../data/types';
+
+interface ChartPoint {
+  time: number;
+  displayTime: number; // time value used for X-axis (may be normalized to minutes-since-midnight)
+  deltaY: number | null;
+  goodFill: number | null;
+  slouchFill: number | null;
+  isScreenOff: boolean;
+}
+
+const MS_PER_DAY = 86_400_000;
+
+/**
+ * Converts a Unix ms timestamp to minutes since midnight.
+ */
+function toMinutesSinceMidnight(timeMs: number): number {
+  const date = new Date(timeMs);
+  return date.getHours() * 60 + date.getMinutes() + date.getSeconds() / 60;
+}
+
+/**
+ * Recharts engine implementing ChartAdapterProps.
+ * Refactored from MainChart — renders ComposedChart with threshold lines,
+ * screen-off bands, area fills (good/slouch), data line, and tooltips.
+ */
+export function RechartsAdapter({
+  data,
+  thresholdPx,
+  visibleDomain,
+  onBrushChange,
+  annotations,
+  onAnnotationCreate,
+  comparisonData,
+  normalizeTimeAxis,
+}: ChartAdapterProps) {
+  const colors = useChartColors();
+
+  // Suppress unused var warning — onBrushChange passed for future brush wiring
+  void onBrushChange;
+
+  // Check prefers-reduced-motion
+  const reducedMotion = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  }, []);
+
+  // Compute screen-off regions
+  const screenOffRegions = useMemo(() => computeScreenOffRegions(data), [data]);
+
+  // Prepare chart data with area fill splits
+  const chartData: ChartPoint[] = useMemo(
+    () =>
+      data.map((r) => {
+        const absDelta = r.deltaY !== null ? Math.abs(r.deltaY) : null;
+        const displayTime = normalizeTimeAxis ? toMinutesSinceMidnight(r.time) : r.time;
+        return {
+          time: r.time,
+          displayTime,
+          deltaY: r.deltaY,
+          goodFill:
+            r.deltaY !== null && absDelta !== null && absDelta <= thresholdPx ? r.deltaY : null,
+          slouchFill:
+            r.deltaY !== null && absDelta !== null && absDelta > thresholdPx ? r.deltaY : null,
+          isScreenOff: r.isScreenOff,
+        };
+      }),
+    [data, thresholdPx, normalizeTimeAxis]
+  );
+
+  // Prepare comparison data if provided
+  const comparisonChartData = useMemo(() => {
+    if (!comparisonData) return null;
+    return comparisonData.map((r) => ({
+      time: r.time,
+      displayTime: normalizeTimeAxis ? toMinutesSinceMidnight(r.time) : r.time,
+      deltaY: r.deltaY,
+      comparisonDeltaY: r.deltaY,
+    }));
+  }, [comparisonData, normalizeTimeAxis]);
+
+  // Merge comparison data into main chart data for rendering on same chart
+  const mergedChartData = useMemo(() => {
+    if (!comparisonChartData) return chartData;
+    // Create a map of displayTime -> comparisonDeltaY
+    const compMap = new Map<number, number | null>();
+    for (const d of comparisonChartData) {
+      compMap.set(d.displayTime, d.comparisonDeltaY);
+    }
+    // Merge into primary data
+    const merged = chartData.map((d) => ({
+      ...d,
+      comparisonDeltaY: compMap.get(d.displayTime) ?? null,
+    }));
+    // Add any comparison-only points
+    for (const cd of comparisonChartData) {
+      if (!chartData.some((d) => d.displayTime === cd.displayTime)) {
+        merged.push({
+          time: cd.time,
+          displayTime: cd.displayTime,
+          deltaY: null,
+          goodFill: null,
+          slouchFill: null,
+          isScreenOff: false,
+          comparisonDeltaY: cd.comparisonDeltaY,
+        });
+      }
+    }
+    merged.sort((a, b) => a.displayTime - b.displayTime);
+    return merged;
+  }, [chartData, comparisonChartData]);
+
+  // Determine time range for tick formatting
+  const timeRange = useMemo(() => {
+    if (visibleDomain) return visibleDomain[1] - visibleDomain[0];
+    if (data.length < 2) return 0;
+    return data[data.length - 1].time - data[0].time;
+  }, [data, visibleDomain]);
+
+  const isMultiDay = timeRange >= MS_PER_DAY;
+
+  const formatTick = normalizeTimeAxis
+    ? (minutes: number): string => {
+        const hrs = Math.floor(minutes) % 24;
+        const mins = Math.round((minutes % 1) * 60);
+        return `${String(hrs).padStart(2, '0')}:${String(mins).padStart(2, '0')}`;
+      }
+    : (t: number): string => {
+        const date = new Date(t);
+        return isMultiDay ? format(date, 'MMM dd HH:mm') : format(date, 'HH:mm');
+      };
+
+  const formatYAxis = (v: number): string => `${v}px`;
+
+  // Handle chart click — find nearest data point and create annotation
+  const handleChartClick = useCallback(
+    (chartEvent: { activePayload?: Array<{ payload: PostureRecord | ChartPoint }> }) => {
+      if (!onAnnotationCreate || !chartEvent?.activePayload?.length) return;
+      const point = chartEvent.activePayload[0].payload;
+      if (point.deltaY !== null) {
+        onAnnotationCreate(point.time, point.deltaY);
+      }
+    },
+    [onAnnotationCreate]
+  );
+
+  // Compute visible domain for X-axis in normalized mode
+  const xDomain = useMemo(() => {
+    if (normalizeTimeAxis) {
+      return [0, 1440] as [number, number]; // 0 to 24*60 minutes
+    }
+    return visibleDomain ?? (['dataMin', 'dataMax'] as const);
+  }, [normalizeTimeAxis, visibleDomain]);
+
+  return (
+    <div role="img" aria-label="Posture data time-series graph">
+      <ResponsiveContainer width="100%" height="100%">
+        <ComposedChart
+          data={mergedChartData}
+          margin={{ top: 16, right: 16, bottom: 32, left: 48 }}
+          onClick={handleChartClick}
+        >
+          <CartesianGrid strokeDasharray="3 3" stroke={colors.chartGrid} />
+          <XAxis
+            dataKey="displayTime"
+            type="number"
+            domain={xDomain}
+            tickFormatter={formatTick}
+            tick={{ fontSize: 12, fill: colors.textSecondary }}
+            stroke={colors.chartGrid}
+          />
+          <YAxis
+            tickFormatter={formatYAxis}
+            tick={{ fontSize: 12, fill: colors.textSecondary }}
+            stroke={colors.chartGrid}
+          />
+
+          {/* Screen-off bands as ReferenceArea */}
+          {screenOffRegions.map((region, i) => (
+            <ReferenceArea
+              key={`screenoff-${i}`}
+              x1={normalizeTimeAxis ? toMinutesSinceMidnight(region.startTime) : region.startTime}
+              x2={normalizeTimeAxis ? toMinutesSinceMidnight(region.endTime) : region.endTime}
+              fill={colors.screenOff}
+              fillOpacity={0.12}
+              strokeOpacity={0}
+            />
+          ))}
+
+          {/* Threshold dashed lines (positive and negative) */}
+          <ReferenceLine
+            y={thresholdPx}
+            stroke={colors.threshold}
+            strokeDasharray="6 4"
+            strokeWidth={2}
+            label={undefined}
+          />
+          <ReferenceLine
+            y={-thresholdPx}
+            stroke={colors.threshold}
+            strokeDasharray="6 4"
+            strokeWidth={2}
+            label={undefined}
+          />
+
+          {/* Area fill for good posture (below threshold) */}
+          <Area
+            dataKey="goodFill"
+            type="monotone"
+            fill={colors.postureGood}
+            fillOpacity={0.15}
+            stroke="none"
+            isAnimationActive={!reducedMotion}
+            animationDuration={400}
+            connectNulls={false}
+          />
+
+          {/* Area fill for slouch (above threshold) */}
+          <Area
+            dataKey="slouchFill"
+            type="monotone"
+            fill={colors.postureSlouch}
+            fillOpacity={0.2}
+            stroke="none"
+            isAnimationActive={!reducedMotion}
+            animationDuration={400}
+            connectNulls={false}
+          />
+
+          {/* Main data line */}
+          <Line
+            dataKey="deltaY"
+            type="monotone"
+            stroke={colors.chartLine}
+            strokeWidth={1.5}
+            dot={false}
+            connectNulls={false}
+            isAnimationActive={!reducedMotion}
+            animationDuration={400}
+          />
+
+          {/* Comparison data line (if comparison mode active) */}
+          {comparisonData && (
+            <Line
+              dataKey="comparisonDeltaY"
+              type="monotone"
+              stroke={colors.postureSlouch}
+              strokeWidth={1.5}
+              dot={false}
+              connectNulls={false}
+              isAnimationActive={!reducedMotion}
+              animationDuration={400}
+              strokeDasharray="4 2"
+            />
+          )}
+
+          {/* Annotation markers */}
+          {annotations.map((ann) => (
+            <ReferenceDot
+              key={ann.id}
+              x={normalizeTimeAxis ? toMinutesSinceMidnight(ann.time) : ann.time}
+              y={ann.deltaY}
+              r={5}
+              fill={colors.threshold}
+              stroke={colors.chartLine}
+              strokeWidth={1}
+            />
+          ))}
+
+          <Tooltip
+            content={<ChartTooltip colors={colors} thresholdValue={thresholdPx} />}
+            cursor={{ stroke: colors.textSecondary, strokeDasharray: '3 3' }}
+          />
+        </ComposedChart>
+      </ResponsiveContainer>
+    </div>
+  );
+}
