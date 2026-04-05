@@ -10,6 +10,8 @@ import type { PostureRecord, ThresholdConfig, ParseResult } from '../../data/typ
 interface GraphViewProps {
   records: PostureRecord[];
   metadata: ParseResult['metadata'];
+  /** Callback fired whenever the computed threshold in pixels changes. */
+  onThresholdPxChange?: (thresholdPx: number) => void;
 }
 
 /** Debounce delay for resize listener (ms). */
@@ -23,7 +25,7 @@ const MOBILE_BREAKPOINT = 640;
  * and a "Load new file" link. Manages threshold and visible domain state,
  * computes medianReferenceY and thresholdPx, and responds to viewport changes.
  */
-export function GraphView({ records, metadata }: GraphViewProps) {
+export function GraphView({ records, metadata, onThresholdPxChange }: GraphViewProps) {
   const dispatch = useDataDispatch();
 
   // Local state
@@ -65,6 +67,11 @@ export function GraphView({ records, metadata }: GraphViewProps) {
     if (threshold.unit === 'px') return threshold.value;
     return medianReferenceY * (threshold.value / 100);
   }, [threshold, medianReferenceY]);
+
+  // Notify parent when thresholdPx changes
+  useEffect(() => {
+    onThresholdPxChange?.(thresholdPx);
+  }, [thresholdPx, onThresholdPxChange]);
 
   // Downsample for chart rendering (LTTB to max 1500 points)
   const downsampledPoints = useMemo(() => downsampleForChart(records), [records]);
