@@ -42,7 +42,7 @@ Plans:
 
 - [x] 01-01-PLAN.md — Scaffold Vite project, install all dependencies, configure Tailwind v4 CSS tokens
 - [x] 01-02-PLAN.md — Define canonical data types contract (types.ts) and write RED test scaffolds
-- [ ] 01-03-PLAN.md — Implement data pipeline: normalizer, validator, and parser (tests GREEN)
+- [x] 01-03-PLAN.md — Implement data pipeline: normalizer, validator, and parser (tests GREEN)
 - [ ] 01-04-PLAN.md — Build Web Worker, data store, upload UI components, and App shell; end-to-end verify
 
 ### Phase 2: Time-Series Graph & Theme
@@ -134,7 +134,7 @@ Phases execute in numeric order: 1 -> 2 -> 3 -> 4 -> 5
 
 | Phase                         | Plans Complete | Status      | Completed |
 | ----------------------------- | -------------- | ----------- | --------- |
-| 1. Data Pipeline              | 0/4            | Planned     | -         |
+| 1. Data Pipeline              | 3/4 | In Progress|  |
 | 2. Time-Series Graph & Theme  | 0/0            | Not started | -         |
 | 3. Metrics Engine & Dashboard | 0/0            | Not started | -         |
 | 4. Dual Chart Engine          | 0/0            | Not started | -         |
